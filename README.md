@@ -1,6 +1,7 @@
 SMASLTOV
-Satisfiability Modulo Abstraction for Separation Logic ThrOugh Valuation
 ========
+Satisfiability Modulo Abstraction for Separation Logic ThrOugh Valuation
+
 This is the Github repository for the SMASLTOV project, as first published
 in the 2014 SPIN Symposium.  http://spin2014.org  
 
