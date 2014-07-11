@@ -1,0 +1,118 @@
+/* THIS FILE HAS BEEN AUTOMATICALLY GENERATED.*/
+/* A structure that models 
+
+1. The formula varphi := ((((((((((((((((((((((((((((((((((((((((((((((((((((((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * ([ a3 |-> a4])))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (ls(a3, a4)))))) | ((!([ a1 |-> a2])) & ((Emp) & ([ a1 |-> a2])))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (True))))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!([ a3 |-> a4])))))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!(ls(a3, a4))))))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!(Emp)))))) | ((!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (False))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * ([ a3 |-> a4]))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (ls(a3, a4)))))) | ((!(ls(a1, a2))) & ((Emp) & (ls(a1, a2))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (True))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!([ a3 |-> a4])))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!(ls(a3, a4))))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!(Emp)))))) | ((!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (False))))) | ((!(Emp)) & ((Emp) & ([ a3 |-> a4])))) | ((!(Emp)) & ((Emp) & (ls(a3, a4))))) | ((!(Emp)) & ((Emp) & (Emp)))) | ((!(Emp)) & (Emp))) | ((!(Emp)) & ((Emp) & (!([ a3 |-> a4]))))) | ((!(Emp)) & ((Emp) & (!(ls(a3, a4)))))) | ((!(Emp)) & ((Emp) & (!(Emp))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * ([ a3 |-> a4]))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (ls(a3, a4)))))) | (([ a1 |-> a2]) & ((Emp) & (!([ a1 |-> a2]))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (True))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!([ a3 |-> a4])))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!(ls(a3, a4))))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!(Emp)))))) | (([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (False))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * ([ a3 |-> a4]))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (ls(a3, a4)))))) | ((ls(a1, a2)) & ((Emp) & (!(ls(a1, a2)))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (True))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!([ a3 |-> a4])))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!(ls(a3, a4))))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!(Emp)))))) | ((ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (False))))) | ((Emp) & ((Emp) & ((!(Emp)) * ([ a3 |-> a4]))))) | ((Emp) & ((Emp) & ((!(Emp)) * (ls(a3, a4)))))) | ((Emp) & ((Emp) & (!(Emp))))) | ((Emp) & ((Emp) & ((!(Emp)) * (True))))) | ((Emp) & ((Emp) & ((!(Emp)) * (!([ a3 |-> a4])))))) | ((Emp) & ((Emp) & ((!(Emp)) * (!(ls(a3, a4))))))) | ((Emp) & ((Emp) & ((!(Emp)) * (!(Emp)))))) | ((Emp) & ((Emp) & ((!(Emp)) * (False))))) | ((Emp) & ((False) * ([ a3 |-> a4])))) | ((Emp) & ((False) * (ls(a3, a4))))) | ((Emp) & ((False) * (True)))) | ((Emp) & ((False) * (!([ a3 |-> a4]))))) | ((Emp) & ((False) * (!(ls(a3, a4)))))) | ((Emp) & ((False) * (!(Emp))))) | ((Emp) & ((False) * (False)))
+2. An arbitrary heap that has at least one cell
+
+3. The stack variables {a1, a2, a3, a4, null}
+
+4. A hierarchical partition of the heap following the nodes of the formula   */
+
+%location L_top = {
+
+%n = { 
+// A summary heap individual
+uh0
+     }
+%p = { 
+valSort = {uh0}
+heapSort = {uh0}
+
+// Predicates that model an arbitrary heap that has at least one cell
+sm = {uh0:1/2}
+
+// Predicates to model the stack variables
+a1 = {uh0:1/2}
+a2 = {uh0:1/2}
+a3 = {uh0:1/2}
+a4 = {uh0:1/2}
+null = {uh0:1/2}
+
+//Equality between stack variables
+is_eq[a1, a1]= 1
+is_eq[a1, a2] = 1/2
+is_eq[a1, a3] = 1/2
+is_eq[a1, a4] = 1/2
+is_eq[a1, null] = 1/2
+is_eq[a2, a1] = 1/2
+is_eq[a2, a2]= 1
+is_eq[a2, a3] = 1/2
+is_eq[a2, a4] = 1/2
+is_eq[a2, null] = 1/2
+is_eq[a3, a1] = 1/2
+is_eq[a3, a2] = 1/2
+is_eq[a3, a3]= 1
+is_eq[a3, a4] = 1/2
+is_eq[a3, null] = 1/2
+is_eq[a4, a1] = 1/2
+is_eq[a4, a2] = 1/2
+is_eq[a4, a3] = 1/2
+is_eq[a4, a4]= 1
+is_eq[a4, null] = 1/2
+is_eq[null, a1] = 1/2
+is_eq[null, a2] = 1/2
+is_eq[null, a3] = 1/2
+is_eq[null, a4] = 1/2
+is_eq[null, null]= 1
+
+// Heap-domain predicates 
+d0 = {uh0:1/2}
+d1 = {uh0:1/2}
+d2 = {uh0:1/2}
+
+// Predicates indicating whether heap-domain is singleton 
+singleton[d0] = 1/2
+singleton[d1] = 1/2
+singleton[d2] = 1/2
+
+// Acyclic heaps
+c[d0, n]= {uh0:0}
+c[d1, n]= {uh0:0}
+c[d2, n]= {uh0:0}
+
+// n-edge through heap-domain 
+n[d0]= {uh0->uh0:1/2}
+n[d1]= {uh0->uh0:1/2}
+n[d2]= {uh0->uh0:1/2}
+
+// Transitive n-edge through heap-domain 
+t[d0, n]= {uh0->uh0:1/2}
+t[d1, n]= {uh0->uh0:1/2}
+t[d2, n]= {uh0->uh0:1/2}
+
+// n-edge stays in heap-domain or n field contains stack variable
+link[d0, n, a1] = {uh0:1/2}
+link[d0, n, a2] = {uh0:1/2}
+link[d0, n, a3] = {uh0:1/2}
+link[d0, n, a4] = {uh0:1/2}
+link[d0, n, null] = {uh0:1/2}
+link[d1, n, a1] = {uh0:1/2}
+link[d1, n, a2] = {uh0:1/2}
+link[d1, n, a3] = {uh0:1/2}
+link[d1, n, a4] = {uh0:1/2}
+link[d1, n, null] = {uh0:1/2}
+link[d2, n, a1] = {uh0:1/2}
+link[d2, n, a2] = {uh0:1/2}
+link[d2, n, a3] = {uh0:1/2}
+link[d2, n, a4] = {uh0:1/2}
+link[d2, n, null] = {uh0:1/2}
+
+// Reachability from stack variables through a heap-domain
+r[d0, n, a1] = {uh0:1/2}
+r[d0, n, a2] = {uh0:1/2}
+r[d0, n, a3] = {uh0:1/2}
+r[d0, n, a4] = {uh0:1/2}
+r[d0, n, null] = {uh0:1/2}
+r[d1, n, a1] = {uh0:1/2}
+r[d1, n, a2] = {uh0:1/2}
+r[d1, n, a3] = {uh0:1/2}
+r[d1, n, a4] = {uh0:1/2}
+r[d1, n, null] = {uh0:1/2}
+r[d2, n, a1] = {uh0:1/2}
+r[d2, n, a2] = {uh0:1/2}
+r[d2, n, a3] = {uh0:1/2}
+r[d2, n, a4] = {uh0:1/2}
+r[d2, n, null] = {uh0:1/2}
+
+     }
+}

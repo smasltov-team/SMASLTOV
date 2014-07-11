@@ -1,0 +1,8 @@
+TVLA: Three-valued logic analyzer.
+
+  http://www.cs.tau.ac.il/~tvla/
+
+For information on building TVLA, see DEVELOPER_README.html.
+
+Currently, TVLA is distributed for academic use only.  See LICENSE for details.
+

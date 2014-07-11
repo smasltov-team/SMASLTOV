@@ -1,0 +1,659 @@
+/* THIS FILE HAS BEEN AUTOMATICALLY GENERATED.*/
+/* This is a batch of multiple formulas.*/
+
+// Sets
+%s StackVars {a1, a2, a3, a4, a5, a6, e1, e2, null}
+%s HeapRegions {d0, d1, d2}
+
+#include "predicates_thru.tvp"
+#include "sl_nzzt.tvp"  
+
+
+%%   
+
+#include "functions_nzzt.tvp"
+
+%%  
+
+
+/* pfrag_unsat_P01_PointsToAndNotLs */
+/*
+ varphi := ([ a1 |-> a2]) & (!(ls(a1, a2)))
+*/
+L1 = OverPointsTo[d0, a1, a2](L_top)
+L2 = OverNotLs[d0, a1, a2](L_top)
+L3 = Meet[](L1, L2)
+// Outcome: pfrag_unsat_P01_PointsToAndNotLs PosOver@ L3
+
+
+/* pfrag_unsat_P08_septract_domain_conflict */
+/*
+ varphi := (([ a1 |-> a2]) --(*) (True)) & (([ a1 |-> a2]) * (True))
+*/
+L4 = OverPointsTo[d0, a1, a2](L_top)
+L5 = RenameRegion[d0, d1](L4)
+L6 = OverTrue[d0](L_top)
+L7 = RenameRegion[d0, d2](L6)
+L8 = CopyFrom[d1, d2](L5)
+L9 = MeetPartitionBoth[d2, d0, d1](L8, L7, L_top)
+L10 = UpdateSubRegion[d0, d1, d2](L9)
+L11 = UpdateSubRegionAgain[d0, d1, d2](L10)
+L12 = ProjectDownToRegion[d0, d1, d2](L11)
+L13 = CopyFrom[d1, d0](L5)
+L14 = CopyFrom[d2, d0](L7)
+L15 = MeetPartitionBoth[d0, d1, d2](L13, L14, L_top)
+L16 = CopyFrom[d1, d0](L15)
+L17 = CopyFrom[d2, d0](L15)
+L18 = Meet3[](L15, L16, L17)
+L19 = UpdateUnion[d0, d1, d2](L18)
+L20 = UpdateUnionAgain[d0, d1, d2](L19)
+L21 = ProjectDownToRegion[d0, d1, d2](L20)
+L22 = Meet[](L12, L21)
+// Outcome: pfrag_unsat_P08_septract_domain_conflict PosOver@ L22
+
+
+/* pfrag_unsat_P02_pts_acyclic */
+/*
+ varphi := ([ a1 |-> a2]) * ([ a2 |-> a1])
+*/
+L23 = OverPointsTo[d0, a1, a2](L_top)
+L24 = RenameRegion[d0, d1](L23)
+L25 = OverPointsTo[d0, a2, a1](L_top)
+L26 = RenameRegion[d0, d2](L25)
+L27 = CopyFrom[d1, d0](L24)
+L28 = CopyFrom[d2, d0](L26)
+L29 = MeetPartitionBoth[d0, d1, d2](L27, L28, L_top)
+L30 = CopyFrom[d1, d0](L29)
+L31 = CopyFrom[d2, d0](L29)
+L32 = Meet3[](L29, L30, L31)
+L33 = UpdateUnion[d0, d1, d2](L32)
+L34 = UpdateUnionAgain[d0, d1, d2](L33)
+L35 = ProjectDownToRegion[d0, d1, d2](L34)
+// Outcome: pfrag_unsat_P02_pts_acyclic PosOver@ L35
+
+
+/* pfrag_unsat_P03_lsxyyx_not_emp */
+/*
+ varphi := (!(Emp)) & ((ls(a1, a2)) * (ls(a2, a1)))
+*/
+L36 = OverNotEmp[d0](L_top)
+L37 = OverLs[d0, a1, a2](L_top)
+L38 = RenameRegion[d0, d1](L37)
+L39 = OverLs[d0, a2, a1](L_top)
+L40 = RenameRegion[d0, d2](L39)
+L41 = CopyFrom[d1, d0](L38)
+L42 = CopyFrom[d2, d0](L40)
+L43 = MeetPartitionBoth[d0, d1, d2](L41, L42, L_top)
+L44 = CopyFrom[d1, d0](L43)
+L45 = CopyFrom[d2, d0](L43)
+L46 = Meet3[](L43, L44, L45)
+L47 = UpdateUnion[d0, d1, d2](L46)
+L48 = UpdateUnionAgain[d0, d1, d2](L47)
+L49 = ProjectDownToRegion[d0, d1, d2](L48)
+L50 = Meet[](L36, L49)
+// Outcome: pfrag_unsat_P03_lsxyyx_not_emp PosOver@ L50
+
+
+/* pfrag_unsat_P04_lsxyyx_not_eq */
+/*
+ varphi := (!(a1 == a2)) & ((ls(a1, a2)) * (ls(a2, a1)))
+*/
+L51 = OverNotEq[a1, a2](L_top)
+L52 = OverLs[d0, a1, a2](L_top)
+L53 = RenameRegion[d0, d1](L52)
+L54 = OverLs[d0, a2, a1](L_top)
+L55 = RenameRegion[d0, d2](L54)
+L56 = CopyFrom[d1, d0](L53)
+L57 = CopyFrom[d2, d0](L55)
+L58 = MeetPartitionBoth[d0, d1, d2](L56, L57, L_top)
+L59 = CopyFrom[d1, d0](L58)
+L60 = CopyFrom[d2, d0](L58)
+L61 = Meet3[](L58, L59, L60)
+L62 = UpdateUnion[d0, d1, d2](L61)
+L63 = UpdateUnionAgain[d0, d1, d2](L62)
+L64 = ProjectDownToRegion[d0, d1, d2](L63)
+L65 = Meet[](L51, L64)
+// Outcome: pfrag_unsat_P04_lsxyyx_not_eq PosOver@ L65
+
+
+/* pfrag_unsat_P06_lsxy_emp_not_eq */
+/*
+ varphi := ((ls(a1, a2)) & (Emp)) & (!(a1 == a2))
+*/
+L66 = OverLs[d0, a1, a2](L_top)
+L67 = OverEmp[d0](L_top)
+L68 = Meet[](L66, L67)
+L69 = OverNotEq[a1, a2](L_top)
+L70 = Meet[](L68, L69)
+// Outcome: pfrag_unsat_P06_lsxy_emp_not_eq PosOver@ L70
+
+
+/* pfrag_unsat_P19_septract_basic */
+/*
+ varphi := (([ a1 |-> a2]) --(*) (ls(a1, a3))) & (((!(ls(a2, a3))) | (([ a1 |-> e1]) * (True))) | (a1 == a3))
+*/
+L71 = OverPointsTo[d0, a1, a2](L_top)
+L72 = RenameRegion[d0, d1](L71)
+L73 = OverLs[d0, a1, a3](L_top)
+L74 = RenameRegion[d0, d2](L73)
+L75 = CopyFrom[d1, d2](L72)
+L76 = MeetPartitionBoth[d2, d0, d1](L75, L74, L_top)
+L77 = UpdateSubRegion[d0, d1, d2](L76)
+L78 = UpdateSubRegionAgain[d0, d1, d2](L77)
+L79 = ProjectDownToRegion[d0, d1, d2](L78)
+L80 = OverNotLs[d0, a2, a3](L_top)
+L81 = OverPointsTo[d0, a1, e1](L_top)
+L82 = RenameRegion[d0, d1](L81)
+L83 = OverTrue[d0](L_top)
+L84 = RenameRegion[d0, d2](L83)
+L85 = CopyFrom[d1, d0](L82)
+L86 = CopyFrom[d2, d0](L84)
+L87 = MeetPartitionBoth[d0, d1, d2](L85, L86, L_top)
+L88 = CopyFrom[d1, d0](L87)
+L89 = CopyFrom[d2, d0](L87)
+L90 = Meet3[](L87, L88, L89)
+L91 = UpdateUnion[d0, d1, d2](L90)
+L92 = UpdateUnionAgain[d0, d1, d2](L91)
+L93 = ProjectDownToRegion[d0, d1, d2](L92)
+L94 = Join[](L80, L93)
+L95 = OverEq[a1, a3](L_top)
+L96 = Join[](L94, L95)
+L97 = Meet[](L79, L96)
+// Outcome: pfrag_unsat_P19_septract_basic PosOver@ L97
+
+
+/* pfrag_unsat_P05_ls_transitive */
+/*
+ varphi := ((ls(a1, a2)) * (ls(a2, a3))) & (!(ls(a1, a3)))
+*/
+L98 = OverLs[d0, a1, a2](L_top)
+L99 = RenameRegion[d0, d1](L98)
+L100 = OverLs[d0, a2, a3](L_top)
+L101 = RenameRegion[d0, d2](L100)
+L102 = CopyFrom[d1, d0](L99)
+L103 = CopyFrom[d2, d0](L101)
+L104 = MeetPartitionBoth[d0, d1, d2](L102, L103, L_top)
+L105 = CopyFrom[d1, d0](L104)
+L106 = CopyFrom[d2, d0](L104)
+L107 = Meet3[](L104, L105, L106)
+L108 = UpdateUnion[d0, d1, d2](L107)
+L109 = UpdateUnionAgain[d0, d1, d2](L108)
+L110 = ProjectDownToRegion[d0, d1, d2](L109)
+L111 = OverNotLs[d0, a1, a3](L_top)
+L112 = Meet[](L110, L111)
+// Outcome: pfrag_unsat_P05_ls_transitive PosOver@ L112
+
+
+/* pfrag_unsat_P09_ls_transitive_neg_down */
+/*
+ varphi := ((ls(a1, a2)) * (!(ls(a2, a3)))) & (ls(a1, a3))
+*/
+L113 = OverLs[d0, a1, a2](L_top)
+L114 = RenameRegion[d0, d1](L113)
+L115 = OverNotLs[d0, a2, a3](L_top)
+L116 = RenameRegion[d0, d2](L115)
+L117 = CopyFrom[d1, d0](L114)
+L118 = CopyFrom[d2, d0](L116)
+L119 = MeetPartitionBoth[d0, d1, d2](L117, L118, L_top)
+L120 = CopyFrom[d1, d0](L119)
+L121 = CopyFrom[d2, d0](L119)
+L122 = Meet3[](L119, L120, L121)
+L123 = UpdateUnion[d0, d1, d2](L122)
+L124 = UpdateUnionAgain[d0, d1, d2](L123)
+L125 = ProjectDownToRegion[d0, d1, d2](L124)
+L126 = OverLs[d0, a1, a3](L_top)
+L127 = Meet[](L125, L126)
+// Outcome: pfrag_unsat_P09_ls_transitive_neg_down PosOver@ L127
+
+
+/* pfrag_unsat_P10_ls_unique_endpoint */
+/*
+ varphi := ((ls(a1, a2)) & (ls(a1, a3))) & ((!(Emp)) & (!(a2 == a3)))
+*/
+L128 = OverLs[d0, a1, a2](L_top)
+L129 = OverLs[d0, a1, a3](L_top)
+L130 = Meet[](L128, L129)
+L131 = OverNotEmp[d0](L_top)
+L132 = OverNotEq[a2, a3](L_top)
+L133 = Meet[](L131, L132)
+L134 = Meet[](L130, L133)
+// Outcome: pfrag_unsat_P10_ls_unique_endpoint PosOver@ L134
+
+
+/* pfrag_unsat_P21_star_septract_left2 */
+/*
+ varphi := (!(a1 == a4)) & (((ls(a1, a4)) --(*) (ls(e1, e2))) & ((a4 == e2) & (!(ls(e1, a1)))))
+*/
+L135 = OverNotEq[a1, a4](L_top)
+L136 = OverLs[d0, a1, a4](L_top)
+L137 = RenameRegion[d0, d1](L136)
+L138 = OverLs[d0, e1, e2](L_top)
+L139 = RenameRegion[d0, d2](L138)
+L140 = CopyFrom[d1, d2](L137)
+L141 = MeetPartitionBoth[d2, d0, d1](L140, L139, L_top)
+L142 = UpdateSubRegion[d0, d1, d2](L141)
+L143 = UpdateSubRegionAgain[d0, d1, d2](L142)
+L144 = ProjectDownToRegion[d0, d1, d2](L143)
+L145 = OverEq[a4, e2](L_top)
+L146 = OverNotLs[d0, e1, a1](L_top)
+L147 = Meet[](L145, L146)
+L148 = Meet[](L144, L147)
+L149 = Meet[](L135, L148)
+// Outcome: pfrag_unsat_P21_star_septract_left2 PosOver@ L149
+
+
+/* pfrag_unsat_P20_septract_left_right */
+/*
+ varphi := (((ls(a1, a2)) & (!(a1 == a2))) --(*) (ls(e1, e2))) & ((!(e1 == a1)) & ((e2 == a2) & (!(ls(e1, a1)))))
+*/
+L150 = OverLs[d0, a1, a2](L_top)
+L151 = OverNotEq[a1, a2](L_top)
+L152 = Meet[](L150, L151)
+L153 = RenameRegion[d0, d1](L152)
+L154 = OverLs[d0, e1, e2](L_top)
+L155 = RenameRegion[d0, d2](L154)
+L156 = CopyFrom[d1, d2](L153)
+L157 = MeetPartitionBoth[d2, d0, d1](L156, L155, L_top)
+L158 = UpdateSubRegion[d0, d1, d2](L157)
+L159 = UpdateSubRegionAgain[d0, d1, d2](L158)
+L160 = ProjectDownToRegion[d0, d1, d2](L159)
+L161 = OverNotEq[e1, a1](L_top)
+L162 = OverEq[e2, a2](L_top)
+L163 = OverNotLs[d0, e1, a1](L_top)
+L164 = Meet[](L162, L163)
+L165 = Meet[](L161, L164)
+L166 = Meet[](L160, L165)
+// Outcome: pfrag_unsat_P20_septract_left_right PosOver@ L166
+
+
+/* pfrag_unsat_P22_septract_right3 */
+/*
+ varphi := (((ls(a1, a2)) & (!(a1 == a2))) --(*) (ls(e1, e2))) & ((!(e2 == a2)) & ((e1 == a1) & (!(ls(a2, e2)))))
+*/
+L167 = OverLs[d0, a1, a2](L_top)
+L168 = OverNotEq[a1, a2](L_top)
+L169 = Meet[](L167, L168)
+L170 = RenameRegion[d0, d1](L169)
+L171 = OverLs[d0, e1, e2](L_top)
+L172 = RenameRegion[d0, d2](L171)
+L173 = CopyFrom[d1, d2](L170)
+L174 = MeetPartitionBoth[d2, d0, d1](L173, L172, L_top)
+L175 = UpdateSubRegion[d0, d1, d2](L174)
+L176 = UpdateSubRegionAgain[d0, d1, d2](L175)
+L177 = ProjectDownToRegion[d0, d1, d2](L176)
+L178 = OverNotEq[e2, a2](L_top)
+L179 = OverEq[e1, a1](L_top)
+L180 = OverNotLs[d0, a2, e2](L_top)
+L181 = Meet[](L179, L180)
+L182 = Meet[](L178, L181)
+L183 = Meet[](L177, L182)
+// Outcome: pfrag_unsat_P22_septract_right3 PosOver@ L183
+
+
+/* pfrag_unsat_P13_ls_singleton2 */
+/*
+ varphi := ((ls(a1, a2)) & ((!(Emp)) * (!(Emp)))) & (((a1 == null) | ([ a1 |-> e1])) | ((([ a1 |-> e1]) & (e1 == null)) * (True)))
+*/
+L184 = OverLs[d0, a1, a2](L_top)
+L185 = OverNotEmp[d0](L_top)
+L186 = RenameRegion[d0, d1](L185)
+L187 = RenameRegion[d0, d2](L185)
+L188 = CopyFrom[d1, d0](L186)
+L189 = CopyFrom[d2, d0](L187)
+L190 = MeetPartitionBoth[d0, d1, d2](L188, L189, L_top)
+L191 = CopyFrom[d1, d0](L190)
+L192 = CopyFrom[d2, d0](L190)
+L193 = Meet3[](L190, L191, L192)
+L194 = UpdateUnion[d0, d1, d2](L193)
+L195 = UpdateUnionAgain[d0, d1, d2](L194)
+L196 = ProjectDownToRegion[d0, d1, d2](L195)
+L197 = Meet[](L184, L196)
+L198 = OverEq[a1, null](L_top)
+L199 = OverPointsTo[d0, a1, e1](L_top)
+L200 = Join[](L198, L199)
+L201 = OverEq[e1, null](L_top)
+L202 = Meet[](L199, L201)
+L203 = RenameRegion[d0, d1](L202)
+L204 = OverTrue[d0](L_top)
+L205 = RenameRegion[d0, d2](L204)
+L206 = CopyFrom[d1, d0](L203)
+L207 = CopyFrom[d2, d0](L205)
+L208 = MeetPartitionBoth[d0, d1, d2](L206, L207, L_top)
+L209 = CopyFrom[d1, d0](L208)
+L210 = CopyFrom[d2, d0](L208)
+L211 = Meet3[](L208, L209, L210)
+L212 = UpdateUnion[d0, d1, d2](L211)
+L213 = UpdateUnionAgain[d0, d1, d2](L212)
+L214 = ProjectDownToRegion[d0, d1, d2](L213)
+L215 = Join[](L200, L214)
+L216 = Meet[](L197, L215)
+// Outcome: pfrag_unsat_P13_ls_singleton2 PosOver@ L216
+
+
+/* pfrag_unsat_P23_double_septract_ls */
+/*
+ varphi := ((([ a2 |-> a3]) --(*) (ls(a2, a4))) --(*) (ls(a3, a1))) & ((!(ls(a4, a1))) | (a2 == a4))
+*/
+L217 = OverPointsTo[d0, a2, a3](L_top)
+L218 = RenameRegion[d0, d1](L217)
+L219 = OverLs[d0, a2, a4](L_top)
+L220 = RenameRegion[d0, d2](L219)
+L221 = CopyFrom[d1, d2](L218)
+L222 = MeetPartitionBoth[d2, d0, d1](L221, L220, L_top)
+L223 = UpdateSubRegion[d0, d1, d2](L222)
+L224 = UpdateSubRegionAgain[d0, d1, d2](L223)
+L225 = ProjectDownToRegion[d0, d1, d2](L224)
+L226 = RenameRegion[d0, d1](L225)
+L227 = OverLs[d0, a3, a1](L_top)
+L228 = RenameRegion[d0, d2](L227)
+L229 = CopyFrom[d1, d2](L226)
+L230 = MeetPartitionBoth[d2, d0, d1](L229, L228, L_top)
+L231 = UpdateSubRegion[d0, d1, d2](L230)
+L232 = UpdateSubRegionAgain[d0, d1, d2](L231)
+L233 = ProjectDownToRegion[d0, d1, d2](L232)
+L234 = OverNotLs[d0, a4, a1](L_top)
+L235 = OverEq[a2, a4](L_top)
+L236 = Join[](L234, L235)
+L237 = Meet[](L233, L236)
+// Outcome: pfrag_unsat_P23_double_septract_ls PosOver@ L237
+
+
+/* pfrag_unsat_P18_double_septract_ls_eq_only */
+/*
+ varphi := ((([ a2 |-> a3]) --(*) (ls(a2, a4))) --(*) (ls(a3, a1))) & (a2 == a4)
+*/
+L238 = OverPointsTo[d0, a2, a3](L_top)
+L239 = RenameRegion[d0, d1](L238)
+L240 = OverLs[d0, a2, a4](L_top)
+L241 = RenameRegion[d0, d2](L240)
+L242 = CopyFrom[d1, d2](L239)
+L243 = MeetPartitionBoth[d2, d0, d1](L242, L241, L_top)
+L244 = UpdateSubRegion[d0, d1, d2](L243)
+L245 = UpdateSubRegionAgain[d0, d1, d2](L244)
+L246 = ProjectDownToRegion[d0, d1, d2](L245)
+L247 = RenameRegion[d0, d1](L246)
+L248 = OverLs[d0, a3, a1](L_top)
+L249 = RenameRegion[d0, d2](L248)
+L250 = CopyFrom[d1, d2](L247)
+L251 = MeetPartitionBoth[d2, d0, d1](L250, L249, L_top)
+L252 = UpdateSubRegion[d0, d1, d2](L251)
+L253 = UpdateSubRegionAgain[d0, d1, d2](L252)
+L254 = ProjectDownToRegion[d0, d1, d2](L253)
+L255 = OverEq[a2, a4](L_top)
+L256 = Meet[](L254, L255)
+// Outcome: pfrag_unsat_P18_double_septract_ls_eq_only PosOver@ L256
+
+
+/* pfrag_unsat_P17_double_septract_ls_both_sides */
+/*
+ varphi := ((([ a2 |-> a3]) --(*) (ls(a2, a4))) --(*) (ls(a1, a4))) & (!(ls(a1, a3)))
+*/
+L257 = OverPointsTo[d0, a2, a3](L_top)
+L258 = RenameRegion[d0, d1](L257)
+L259 = OverLs[d0, a2, a4](L_top)
+L260 = RenameRegion[d0, d2](L259)
+L261 = CopyFrom[d1, d2](L258)
+L262 = MeetPartitionBoth[d2, d0, d1](L261, L260, L_top)
+L263 = UpdateSubRegion[d0, d1, d2](L262)
+L264 = UpdateSubRegionAgain[d0, d1, d2](L263)
+L265 = ProjectDownToRegion[d0, d1, d2](L264)
+L266 = RenameRegion[d0, d1](L265)
+L267 = OverLs[d0, a1, a4](L_top)
+L268 = RenameRegion[d0, d2](L267)
+L269 = CopyFrom[d1, d2](L266)
+L270 = MeetPartitionBoth[d2, d0, d1](L269, L268, L_top)
+L271 = UpdateSubRegion[d0, d1, d2](L270)
+L272 = UpdateSubRegionAgain[d0, d1, d2](L271)
+L273 = ProjectDownToRegion[d0, d1, d2](L272)
+L274 = OverNotLs[d0, a1, a3](L_top)
+L275 = Meet[](L273, L274)
+// Outcome: pfrag_unsat_P17_double_septract_ls_both_sides PosOver@ L275
+
+
+/* pfrag_unsat_P16_concur07_right_reduced2 */
+/*
+ varphi := (([ a3 |-> a4]) --(*) (ls(a1, a4))) & ((a3 == a4) | (!(ls(a1, a3))))
+*/
+L276 = OverPointsTo[d0, a3, a4](L_top)
+L277 = RenameRegion[d0, d1](L276)
+L278 = OverLs[d0, a1, a4](L_top)
+L279 = RenameRegion[d0, d2](L278)
+L280 = CopyFrom[d1, d2](L277)
+L281 = MeetPartitionBoth[d2, d0, d1](L280, L279, L_top)
+L282 = UpdateSubRegion[d0, d1, d2](L281)
+L283 = UpdateSubRegionAgain[d0, d1, d2](L282)
+L284 = ProjectDownToRegion[d0, d1, d2](L283)
+L285 = OverEq[a3, a4](L_top)
+L286 = OverNotLs[d0, a1, a3](L_top)
+L287 = Join[](L285, L286)
+L288 = Meet[](L284, L287)
+// Outcome: pfrag_unsat_P16_concur07_right_reduced2 PosOver@ L288
+
+
+/* pfrag_unsat_P14_overlap */
+/*
+ varphi := (((ls(a1, a2)) & (!(a1 == a2))) * ((ls(a2, a3)) & (!(a2 == a3)))) & ((((ls(a4, a1)) & (!(a4 == a1))) * ([ a1 |-> e1])) * (True))
+*/
+L289 = OverLs[d0, a1, a2](L_top)
+L290 = OverNotEq[a1, a2](L_top)
+L291 = Meet[](L289, L290)
+L292 = RenameRegion[d0, d1](L291)
+L293 = OverLs[d0, a2, a3](L_top)
+L294 = OverNotEq[a2, a3](L_top)
+L295 = Meet[](L293, L294)
+L296 = RenameRegion[d0, d2](L295)
+L297 = CopyFrom[d1, d0](L292)
+L298 = CopyFrom[d2, d0](L296)
+L299 = MeetPartitionBoth[d0, d1, d2](L297, L298, L_top)
+L300 = CopyFrom[d1, d0](L299)
+L301 = CopyFrom[d2, d0](L299)
+L302 = Meet3[](L299, L300, L301)
+L303 = UpdateUnion[d0, d1, d2](L302)
+L304 = UpdateUnionAgain[d0, d1, d2](L303)
+L305 = ProjectDownToRegion[d0, d1, d2](L304)
+L306 = OverLs[d0, a4, a1](L_top)
+L307 = OverNotEq[a4, a1](L_top)
+L308 = Meet[](L306, L307)
+L309 = RenameRegion[d0, d1](L308)
+L310 = OverPointsTo[d0, a1, e1](L_top)
+L311 = RenameRegion[d0, d2](L310)
+L312 = CopyFrom[d1, d0](L309)
+L313 = CopyFrom[d2, d0](L311)
+L314 = MeetPartitionBoth[d0, d1, d2](L312, L313, L_top)
+L315 = CopyFrom[d1, d0](L314)
+L316 = CopyFrom[d2, d0](L314)
+L317 = Meet3[](L314, L315, L316)
+L318 = UpdateUnion[d0, d1, d2](L317)
+L319 = UpdateUnionAgain[d0, d1, d2](L318)
+L320 = ProjectDownToRegion[d0, d1, d2](L319)
+L321 = RenameRegion[d0, d1](L320)
+L322 = OverTrue[d0](L_top)
+L323 = RenameRegion[d0, d2](L322)
+L324 = CopyFrom[d1, d0](L321)
+L325 = CopyFrom[d2, d0](L323)
+L326 = MeetPartitionBoth[d0, d1, d2](L324, L325, L_top)
+L327 = CopyFrom[d1, d0](L326)
+L328 = CopyFrom[d2, d0](L326)
+L329 = Meet3[](L326, L327, L328)
+L330 = UpdateUnion[d0, d1, d2](L329)
+L331 = UpdateUnionAgain[d0, d1, d2](L330)
+L332 = ProjectDownToRegion[d0, d1, d2](L331)
+L333 = Meet[](L305, L332)
+// Outcome: pfrag_unsat_P14_overlap PosOver@ L333
+
+
+/* pfrag_unsat_P15_septract_ls_self_implies_emp */
+/*
+ varphi := ((ls(a1, a2)) --(*) (ls(a1, a2))) & (!(Emp))
+*/
+L334 = OverLs[d0, a1, a2](L_top)
+L335 = RenameRegion[d0, d1](L334)
+L336 = RenameRegion[d0, d2](L334)
+L337 = CopyFrom[d1, d2](L335)
+L338 = MeetPartitionBoth[d2, d0, d1](L337, L336, L_top)
+L339 = UpdateSubRegion[d0, d1, d2](L338)
+L340 = UpdateSubRegionAgain[d0, d1, d2](L339)
+L341 = ProjectDownToRegion[d0, d1, d2](L340)
+L342 = OverNotEmp[d0](L_top)
+L343 = Meet[](L341, L342)
+// Outcome: pfrag_unsat_P15_septract_ls_self_implies_emp PosOver@ L343
+
+
+/* pfrag_unsat_P11_ls_plus_two_step_cycle2 */
+/*
+ varphi := (((ls(a1, a2)) * (True)) * ([ a3 |-> a4])) & ((True) * ((ls(a2, a1)) & (!(a2 == a1))))
+*/
+L344 = OverLs[d0, a1, a2](L_top)
+L345 = RenameRegion[d0, d1](L344)
+L346 = OverTrue[d0](L_top)
+L347 = RenameRegion[d0, d2](L346)
+L348 = CopyFrom[d1, d0](L345)
+L349 = CopyFrom[d2, d0](L347)
+L350 = MeetPartitionBoth[d0, d1, d2](L348, L349, L_top)
+L351 = CopyFrom[d1, d0](L350)
+L352 = CopyFrom[d2, d0](L350)
+L353 = Meet3[](L350, L351, L352)
+L354 = UpdateUnion[d0, d1, d2](L353)
+L355 = UpdateUnionAgain[d0, d1, d2](L354)
+L356 = ProjectDownToRegion[d0, d1, d2](L355)
+L357 = RenameRegion[d0, d1](L356)
+L358 = OverPointsTo[d0, a3, a4](L_top)
+L359 = RenameRegion[d0, d2](L358)
+L360 = CopyFrom[d1, d0](L357)
+L361 = CopyFrom[d2, d0](L359)
+L362 = MeetPartitionBoth[d0, d1, d2](L360, L361, L_top)
+L363 = CopyFrom[d1, d0](L362)
+L364 = CopyFrom[d2, d0](L362)
+L365 = Meet3[](L362, L363, L364)
+L366 = UpdateUnion[d0, d1, d2](L365)
+L367 = UpdateUnionAgain[d0, d1, d2](L366)
+L368 = ProjectDownToRegion[d0, d1, d2](L367)
+L369 = RenameRegion[d0, d1](L346)
+L370 = OverLs[d0, a2, a1](L_top)
+L371 = OverNotEq[a2, a1](L_top)
+L372 = Meet[](L370, L371)
+L373 = RenameRegion[d0, d2](L372)
+L374 = CopyFrom[d1, d0](L369)
+L375 = CopyFrom[d2, d0](L373)
+L376 = MeetPartitionBoth[d0, d1, d2](L374, L375, L_top)
+L377 = CopyFrom[d1, d0](L376)
+L378 = CopyFrom[d2, d0](L376)
+L379 = Meet3[](L376, L377, L378)
+L380 = UpdateUnion[d0, d1, d2](L379)
+L381 = UpdateUnionAgain[d0, d1, d2](L380)
+L382 = ProjectDownToRegion[d0, d1, d2](L381)
+L383 = Meet[](L368, L382)
+// Outcome: pfrag_unsat_P11_ls_plus_two_step_cycle2 PosOver@ L383
+
+
+/* pfrag_unsat_P07_pts_three_step_cycle3 */
+/*
+ varphi := ((([ a1 |-> a2]) * (True)) & (([ a2 |-> a3]) * (True))) & ((True) * ([ a3 |-> a1]))
+*/
+L384 = OverPointsTo[d0, a1, a2](L_top)
+L385 = RenameRegion[d0, d1](L384)
+L386 = OverTrue[d0](L_top)
+L387 = RenameRegion[d0, d2](L386)
+L388 = CopyFrom[d1, d0](L385)
+L389 = CopyFrom[d2, d0](L387)
+L390 = MeetPartitionBoth[d0, d1, d2](L388, L389, L_top)
+L391 = CopyFrom[d1, d0](L390)
+L392 = CopyFrom[d2, d0](L390)
+L393 = Meet3[](L390, L391, L392)
+L394 = UpdateUnion[d0, d1, d2](L393)
+L395 = UpdateUnionAgain[d0, d1, d2](L394)
+L396 = ProjectDownToRegion[d0, d1, d2](L395)
+L397 = OverPointsTo[d0, a2, a3](L_top)
+L398 = RenameRegion[d0, d1](L397)
+L399 = CopyFrom[d1, d0](L398)
+L400 = CopyFrom[d2, d0](L387)
+L401 = MeetPartitionBoth[d0, d1, d2](L399, L400, L_top)
+L402 = CopyFrom[d1, d0](L401)
+L403 = CopyFrom[d2, d0](L401)
+L404 = Meet3[](L401, L402, L403)
+L405 = UpdateUnion[d0, d1, d2](L404)
+L406 = UpdateUnionAgain[d0, d1, d2](L405)
+L407 = ProjectDownToRegion[d0, d1, d2](L406)
+L408 = Meet[](L396, L407)
+L409 = RenameRegion[d0, d1](L386)
+L410 = OverPointsTo[d0, a3, a1](L_top)
+L411 = RenameRegion[d0, d2](L410)
+L412 = CopyFrom[d1, d0](L409)
+L413 = CopyFrom[d2, d0](L411)
+L414 = MeetPartitionBoth[d0, d1, d2](L412, L413, L_top)
+L415 = CopyFrom[d1, d0](L414)
+L416 = CopyFrom[d2, d0](L414)
+L417 = Meet3[](L414, L415, L416)
+L418 = UpdateUnion[d0, d1, d2](L417)
+L419 = UpdateUnionAgain[d0, d1, d2](L418)
+L420 = ProjectDownToRegion[d0, d1, d2](L419)
+L421 = Meet[](L408, L420)
+// Outcome: pfrag_unsat_P07_pts_three_step_cycle3 PosOver@ L421
+
+
+/* pfrag_unsat_P12_pts_three_step_cycle2 */
+/*
+ varphi := ((([ a1 |-> a2]) * (ls(e1, e2))) & (([ a2 |-> a3]) * (!(Emp)))) & ((([ a3 |-> a1]) * (!([ a5 |-> a6]))) * (True))
+*/
+L422 = OverPointsTo[d0, a1, a2](L_top)
+L423 = RenameRegion[d0, d1](L422)
+L424 = OverLs[d0, e1, e2](L_top)
+L425 = RenameRegion[d0, d2](L424)
+L426 = CopyFrom[d1, d0](L423)
+L427 = CopyFrom[d2, d0](L425)
+L428 = MeetPartitionBoth[d0, d1, d2](L426, L427, L_top)
+L429 = CopyFrom[d1, d0](L428)
+L430 = CopyFrom[d2, d0](L428)
+L431 = Meet3[](L428, L429, L430)
+L432 = UpdateUnion[d0, d1, d2](L431)
+L433 = UpdateUnionAgain[d0, d1, d2](L432)
+L434 = ProjectDownToRegion[d0, d1, d2](L433)
+L435 = OverPointsTo[d0, a2, a3](L_top)
+L436 = RenameRegion[d0, d1](L435)
+L437 = OverNotEmp[d0](L_top)
+L438 = RenameRegion[d0, d2](L437)
+L439 = CopyFrom[d1, d0](L436)
+L440 = CopyFrom[d2, d0](L438)
+L441 = MeetPartitionBoth[d0, d1, d2](L439, L440, L_top)
+L442 = CopyFrom[d1, d0](L441)
+L443 = CopyFrom[d2, d0](L441)
+L444 = Meet3[](L441, L442, L443)
+L445 = UpdateUnion[d0, d1, d2](L444)
+L446 = UpdateUnionAgain[d0, d1, d2](L445)
+L447 = ProjectDownToRegion[d0, d1, d2](L446)
+L448 = Meet[](L434, L447)
+L449 = OverPointsTo[d0, a3, a1](L_top)
+L450 = RenameRegion[d0, d1](L449)
+L451 = OverNotPointsTo[d0, a5, a6](L_top)
+L452 = RenameRegion[d0, d2](L451)
+L453 = CopyFrom[d1, d0](L450)
+L454 = CopyFrom[d2, d0](L452)
+L455 = MeetPartitionBoth[d0, d1, d2](L453, L454, L_top)
+L456 = CopyFrom[d1, d0](L455)
+L457 = CopyFrom[d2, d0](L455)
+L458 = Meet3[](L455, L456, L457)
+L459 = UpdateUnion[d0, d1, d2](L458)
+L460 = UpdateUnionAgain[d0, d1, d2](L459)
+L461 = ProjectDownToRegion[d0, d1, d2](L460)
+L462 = RenameRegion[d0, d1](L461)
+L463 = OverTrue[d0](L_top)
+L464 = RenameRegion[d0, d2](L463)
+L465 = CopyFrom[d1, d0](L462)
+L466 = CopyFrom[d2, d0](L464)
+L467 = MeetPartitionBoth[d0, d1, d2](L465, L466, L_top)
+L468 = CopyFrom[d1, d0](L467)
+L469 = CopyFrom[d2, d0](L467)
+L470 = Meet3[](L467, L468, L469)
+L471 = UpdateUnion[d0, d1, d2](L470)
+L472 = UpdateUnionAgain[d0, d1, d2](L471)
+L473 = ProjectDownToRegion[d0, d1, d2](L472)
+L474 = Meet[](L448, L473)
+// Outcome: pfrag_unsat_P12_pts_three_step_cycle2 PosOver@ L474
+
+
+
+%% 
+
+///////////////////////////////////////////////////////////////////////// 
+// Display only structures that arise at the following program locations.
+L3 L22 L35 L50 L65 L70 L97 L112 L127 L134 L149 L166 L183 L216 L237 L256 L275 L288 L333 L343 L383 L421 L474 

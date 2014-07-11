@@ -1,0 +1,1228 @@
+/* THIS FILE HAS BEEN AUTOMATICALLY GENERATED.*/
+/* This is a batch of multiple formulas.*/
+
+// Sets
+%s StackVars {a1, a2, a3, a4, null}
+%s HeapRegions {d0, d1, d2}
+
+#include "predicates_thru.tvp"
+#include "sl_nzzt.tvp"  
+
+
+%%   
+
+#include "functions_nzzt.tvp"
+
+%%  
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2PtsTo_a3_a4 */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * ([ a3 |-> a4])))
+*/
+L1 = OverNotPointsTo[d0, a1, a2](L_top)
+L2 = OverEmp[d0](L_top)
+L3 = OverPointsTo[d0, a1, a2](L_top)
+L4 = RenameRegion[d0, d1](L3)
+L5 = OverPointsTo[d0, a3, a4](L_top)
+L6 = RenameRegion[d0, d2](L5)
+L7 = CopyFrom[d1, d0](L4)
+L8 = CopyFrom[d2, d0](L6)
+L9 = MeetPartitionBoth[d0, d1, d2](L7, L8, L_top)
+L10 = CopyFrom[d1, d0](L9)
+L11 = CopyFrom[d2, d0](L9)
+L12 = Meet3[](L9, L10, L11)
+L13 = UpdateUnion[d0, d1, d2](L12)
+L14 = UpdateUnionAgain[d0, d1, d2](L13)
+L15 = ProjectDownToRegion[d0, d1, d2](L14)
+L16 = Meet[](L2, L15)
+L17 = Meet[](L1, L16)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2PtsTo_a3_a4 PosOver@ L17
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2Ls_a3_a4 */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (ls(a3, a4))))
+*/
+L18 = OverNotPointsTo[d0, a1, a2](L_top)
+L19 = OverEmp[d0](L_top)
+L20 = OverPointsTo[d0, a1, a2](L_top)
+L21 = RenameRegion[d0, d1](L20)
+L22 = OverLs[d0, a3, a4](L_top)
+L23 = RenameRegion[d0, d2](L22)
+L24 = CopyFrom[d1, d0](L21)
+L25 = CopyFrom[d2, d0](L23)
+L26 = MeetPartitionBoth[d0, d1, d2](L24, L25, L_top)
+L27 = CopyFrom[d1, d0](L26)
+L28 = CopyFrom[d2, d0](L26)
+L29 = Meet3[](L26, L27, L28)
+L30 = UpdateUnion[d0, d1, d2](L29)
+L31 = UpdateUnionAgain[d0, d1, d2](L30)
+L32 = ProjectDownToRegion[d0, d1, d2](L31)
+L33 = Meet[](L19, L32)
+L34 = Meet[](L18, L33)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2Ls_a3_a4 PosOver@ L34
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2Emp */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & ([ a1 |-> a2]))
+*/
+L35 = OverNotPointsTo[d0, a1, a2](L_top)
+L36 = OverEmp[d0](L_top)
+L37 = OverPointsTo[d0, a1, a2](L_top)
+L38 = Meet[](L36, L37)
+L39 = Meet[](L35, L38)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2Emp PosOver@ L39
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2True */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (True)))
+*/
+L40 = OverNotPointsTo[d0, a1, a2](L_top)
+L41 = OverEmp[d0](L_top)
+L42 = OverPointsTo[d0, a1, a2](L_top)
+L43 = RenameRegion[d0, d1](L42)
+L44 = OverTrue[d0](L_top)
+L45 = RenameRegion[d0, d2](L44)
+L46 = CopyFrom[d1, d0](L43)
+L47 = CopyFrom[d2, d0](L45)
+L48 = MeetPartitionBoth[d0, d1, d2](L46, L47, L_top)
+L49 = CopyFrom[d1, d0](L48)
+L50 = CopyFrom[d2, d0](L48)
+L51 = Meet3[](L48, L49, L50)
+L52 = UpdateUnion[d0, d1, d2](L51)
+L53 = UpdateUnionAgain[d0, d1, d2](L52)
+L54 = ProjectDownToRegion[d0, d1, d2](L53)
+L55 = Meet[](L41, L54)
+L56 = Meet[](L40, L55)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2True PosOver@ L56
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2NotPtsTo_a3_a4 */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!([ a3 |-> a4]))))
+*/
+L57 = OverNotPointsTo[d0, a1, a2](L_top)
+L58 = OverEmp[d0](L_top)
+L59 = OverPointsTo[d0, a1, a2](L_top)
+L60 = RenameRegion[d0, d1](L59)
+L61 = OverNotPointsTo[d0, a3, a4](L_top)
+L62 = RenameRegion[d0, d2](L61)
+L63 = CopyFrom[d1, d0](L60)
+L64 = CopyFrom[d2, d0](L62)
+L65 = MeetPartitionBoth[d0, d1, d2](L63, L64, L_top)
+L66 = CopyFrom[d1, d0](L65)
+L67 = CopyFrom[d2, d0](L65)
+L68 = Meet3[](L65, L66, L67)
+L69 = UpdateUnion[d0, d1, d2](L68)
+L70 = UpdateUnionAgain[d0, d1, d2](L69)
+L71 = ProjectDownToRegion[d0, d1, d2](L70)
+L72 = Meet[](L58, L71)
+L73 = Meet[](L57, L72)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2NotPtsTo_a3_a4 PosOver@ L73
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2NotLs_a3_a4 */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!(ls(a3, a4)))))
+*/
+L74 = OverNotPointsTo[d0, a1, a2](L_top)
+L75 = OverEmp[d0](L_top)
+L76 = OverPointsTo[d0, a1, a2](L_top)
+L77 = RenameRegion[d0, d1](L76)
+L78 = OverNotLs[d0, a3, a4](L_top)
+L79 = RenameRegion[d0, d2](L78)
+L80 = CopyFrom[d1, d0](L77)
+L81 = CopyFrom[d2, d0](L79)
+L82 = MeetPartitionBoth[d0, d1, d2](L80, L81, L_top)
+L83 = CopyFrom[d1, d0](L82)
+L84 = CopyFrom[d2, d0](L82)
+L85 = Meet3[](L82, L83, L84)
+L86 = UpdateUnion[d0, d1, d2](L85)
+L87 = UpdateUnionAgain[d0, d1, d2](L86)
+L88 = ProjectDownToRegion[d0, d1, d2](L87)
+L89 = Meet[](L75, L88)
+L90 = Meet[](L74, L89)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2NotLs_a3_a4 PosOver@ L90
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2NotEmp */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (!(Emp))))
+*/
+L91 = OverNotPointsTo[d0, a1, a2](L_top)
+L92 = OverEmp[d0](L_top)
+L93 = OverPointsTo[d0, a1, a2](L_top)
+L94 = RenameRegion[d0, d1](L93)
+L95 = OverNotEmp[d0](L_top)
+L96 = RenameRegion[d0, d2](L95)
+L97 = CopyFrom[d1, d0](L94)
+L98 = CopyFrom[d2, d0](L96)
+L99 = MeetPartitionBoth[d0, d1, d2](L97, L98, L_top)
+L100 = CopyFrom[d1, d0](L99)
+L101 = CopyFrom[d2, d0](L99)
+L102 = Meet3[](L99, L100, L101)
+L103 = UpdateUnion[d0, d1, d2](L102)
+L104 = UpdateUnionAgain[d0, d1, d2](L103)
+L105 = ProjectDownToRegion[d0, d1, d2](L104)
+L106 = Meet[](L92, L105)
+L107 = Meet[](L91, L106)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2NotEmp PosOver@ L107
+
+
+/* group1N_popl14_table2_19_PtsTo_a1_a2NotTrue */
+/*
+ varphi := (!([ a1 |-> a2])) & ((Emp) & (([ a1 |-> a2]) * (False)))
+*/
+L108 = OverNotPointsTo[d0, a1, a2](L_top)
+L109 = OverEmp[d0](L_top)
+L110 = OverPointsTo[d0, a1, a2](L_top)
+L111 = RenameRegion[d0, d1](L110)
+L112 = OverFalse[d0](L_top)
+L113 = RenameRegion[d0, d2](L112)
+L114 = CopyFrom[d1, d0](L111)
+L115 = CopyFrom[d2, d0](L113)
+L116 = MeetPartitionBoth[d0, d1, d2](L114, L115, L_top)
+L117 = CopyFrom[d1, d0](L116)
+L118 = CopyFrom[d2, d0](L116)
+L119 = Meet3[](L116, L117, L118)
+L120 = UpdateUnion[d0, d1, d2](L119)
+L121 = UpdateUnionAgain[d0, d1, d2](L120)
+L122 = ProjectDownToRegion[d0, d1, d2](L121)
+L123 = Meet[](L109, L122)
+L124 = Meet[](L108, L123)
+// Outcome: group1N_popl14_table2_19_PtsTo_a1_a2NotTrue PosOver@ L124
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2PtsTo_a3_a4 */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * ([ a3 |-> a4])))
+*/
+L125 = OverNotLs[d0, a1, a2](L_top)
+L126 = OverEmp[d0](L_top)
+L127 = OverLs[d0, a1, a2](L_top)
+L128 = RenameRegion[d0, d1](L127)
+L129 = OverPointsTo[d0, a3, a4](L_top)
+L130 = RenameRegion[d0, d2](L129)
+L131 = CopyFrom[d1, d0](L128)
+L132 = CopyFrom[d2, d0](L130)
+L133 = MeetPartitionBoth[d0, d1, d2](L131, L132, L_top)
+L134 = CopyFrom[d1, d0](L133)
+L135 = CopyFrom[d2, d0](L133)
+L136 = Meet3[](L133, L134, L135)
+L137 = UpdateUnion[d0, d1, d2](L136)
+L138 = UpdateUnionAgain[d0, d1, d2](L137)
+L139 = ProjectDownToRegion[d0, d1, d2](L138)
+L140 = Meet[](L126, L139)
+L141 = Meet[](L125, L140)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2PtsTo_a3_a4 PosOver@ L141
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2Ls_a3_a4 */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (ls(a3, a4))))
+*/
+L142 = OverNotLs[d0, a1, a2](L_top)
+L143 = OverEmp[d0](L_top)
+L144 = OverLs[d0, a1, a2](L_top)
+L145 = RenameRegion[d0, d1](L144)
+L146 = OverLs[d0, a3, a4](L_top)
+L147 = RenameRegion[d0, d2](L146)
+L148 = CopyFrom[d1, d0](L145)
+L149 = CopyFrom[d2, d0](L147)
+L150 = MeetPartitionBoth[d0, d1, d2](L148, L149, L_top)
+L151 = CopyFrom[d1, d0](L150)
+L152 = CopyFrom[d2, d0](L150)
+L153 = Meet3[](L150, L151, L152)
+L154 = UpdateUnion[d0, d1, d2](L153)
+L155 = UpdateUnionAgain[d0, d1, d2](L154)
+L156 = ProjectDownToRegion[d0, d1, d2](L155)
+L157 = Meet[](L143, L156)
+L158 = Meet[](L142, L157)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2Ls_a3_a4 PosOver@ L158
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2Emp */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & (ls(a1, a2)))
+*/
+L159 = OverNotLs[d0, a1, a2](L_top)
+L160 = OverEmp[d0](L_top)
+L161 = OverLs[d0, a1, a2](L_top)
+L162 = Meet[](L160, L161)
+L163 = Meet[](L159, L162)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2Emp PosOver@ L163
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2True */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (True)))
+*/
+L164 = OverNotLs[d0, a1, a2](L_top)
+L165 = OverEmp[d0](L_top)
+L166 = OverLs[d0, a1, a2](L_top)
+L167 = RenameRegion[d0, d1](L166)
+L168 = OverTrue[d0](L_top)
+L169 = RenameRegion[d0, d2](L168)
+L170 = CopyFrom[d1, d0](L167)
+L171 = CopyFrom[d2, d0](L169)
+L172 = MeetPartitionBoth[d0, d1, d2](L170, L171, L_top)
+L173 = CopyFrom[d1, d0](L172)
+L174 = CopyFrom[d2, d0](L172)
+L175 = Meet3[](L172, L173, L174)
+L176 = UpdateUnion[d0, d1, d2](L175)
+L177 = UpdateUnionAgain[d0, d1, d2](L176)
+L178 = ProjectDownToRegion[d0, d1, d2](L177)
+L179 = Meet[](L165, L178)
+L180 = Meet[](L164, L179)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2True PosOver@ L180
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2NotPtsTo_a3_a4 */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!([ a3 |-> a4]))))
+*/
+L181 = OverNotLs[d0, a1, a2](L_top)
+L182 = OverEmp[d0](L_top)
+L183 = OverLs[d0, a1, a2](L_top)
+L184 = RenameRegion[d0, d1](L183)
+L185 = OverNotPointsTo[d0, a3, a4](L_top)
+L186 = RenameRegion[d0, d2](L185)
+L187 = CopyFrom[d1, d0](L184)
+L188 = CopyFrom[d2, d0](L186)
+L189 = MeetPartitionBoth[d0, d1, d2](L187, L188, L_top)
+L190 = CopyFrom[d1, d0](L189)
+L191 = CopyFrom[d2, d0](L189)
+L192 = Meet3[](L189, L190, L191)
+L193 = UpdateUnion[d0, d1, d2](L192)
+L194 = UpdateUnionAgain[d0, d1, d2](L193)
+L195 = ProjectDownToRegion[d0, d1, d2](L194)
+L196 = Meet[](L182, L195)
+L197 = Meet[](L181, L196)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2NotPtsTo_a3_a4 PosOver@ L197
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2NotLs_a3_a4 */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!(ls(a3, a4)))))
+*/
+L198 = OverNotLs[d0, a1, a2](L_top)
+L199 = OverEmp[d0](L_top)
+L200 = OverLs[d0, a1, a2](L_top)
+L201 = RenameRegion[d0, d1](L200)
+L202 = OverNotLs[d0, a3, a4](L_top)
+L203 = RenameRegion[d0, d2](L202)
+L204 = CopyFrom[d1, d0](L201)
+L205 = CopyFrom[d2, d0](L203)
+L206 = MeetPartitionBoth[d0, d1, d2](L204, L205, L_top)
+L207 = CopyFrom[d1, d0](L206)
+L208 = CopyFrom[d2, d0](L206)
+L209 = Meet3[](L206, L207, L208)
+L210 = UpdateUnion[d0, d1, d2](L209)
+L211 = UpdateUnionAgain[d0, d1, d2](L210)
+L212 = ProjectDownToRegion[d0, d1, d2](L211)
+L213 = Meet[](L199, L212)
+L214 = Meet[](L198, L213)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2NotLs_a3_a4 PosOver@ L214
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2NotEmp */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (!(Emp))))
+*/
+L215 = OverNotLs[d0, a1, a2](L_top)
+L216 = OverEmp[d0](L_top)
+L217 = OverLs[d0, a1, a2](L_top)
+L218 = RenameRegion[d0, d1](L217)
+L219 = OverNotEmp[d0](L_top)
+L220 = RenameRegion[d0, d2](L219)
+L221 = CopyFrom[d1, d0](L218)
+L222 = CopyFrom[d2, d0](L220)
+L223 = MeetPartitionBoth[d0, d1, d2](L221, L222, L_top)
+L224 = CopyFrom[d1, d0](L223)
+L225 = CopyFrom[d2, d0](L223)
+L226 = Meet3[](L223, L224, L225)
+L227 = UpdateUnion[d0, d1, d2](L226)
+L228 = UpdateUnionAgain[d0, d1, d2](L227)
+L229 = ProjectDownToRegion[d0, d1, d2](L228)
+L230 = Meet[](L216, L229)
+L231 = Meet[](L215, L230)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2NotEmp PosOver@ L231
+
+
+/* group1N_popl14_table2_19_Ls_a1_a2NotTrue */
+/*
+ varphi := (!(ls(a1, a2))) & ((Emp) & ((ls(a1, a2)) * (False)))
+*/
+L232 = OverNotLs[d0, a1, a2](L_top)
+L233 = OverEmp[d0](L_top)
+L234 = OverLs[d0, a1, a2](L_top)
+L235 = RenameRegion[d0, d1](L234)
+L236 = OverFalse[d0](L_top)
+L237 = RenameRegion[d0, d2](L236)
+L238 = CopyFrom[d1, d0](L235)
+L239 = CopyFrom[d2, d0](L237)
+L240 = MeetPartitionBoth[d0, d1, d2](L238, L239, L_top)
+L241 = CopyFrom[d1, d0](L240)
+L242 = CopyFrom[d2, d0](L240)
+L243 = Meet3[](L240, L241, L242)
+L244 = UpdateUnion[d0, d1, d2](L243)
+L245 = UpdateUnionAgain[d0, d1, d2](L244)
+L246 = ProjectDownToRegion[d0, d1, d2](L245)
+L247 = Meet[](L233, L246)
+L248 = Meet[](L232, L247)
+// Outcome: group1N_popl14_table2_19_Ls_a1_a2NotTrue PosOver@ L248
+
+
+/* group1N_popl14_table2_19_EmpPtsTo_a3_a4 */
+/*
+ varphi := (!(Emp)) & ((Emp) & ([ a3 |-> a4]))
+*/
+L249 = OverNotEmp[d0](L_top)
+L250 = OverEmp[d0](L_top)
+L251 = OverPointsTo[d0, a3, a4](L_top)
+L252 = Meet[](L250, L251)
+L253 = Meet[](L249, L252)
+// Outcome: group1N_popl14_table2_19_EmpPtsTo_a3_a4 PosOver@ L253
+
+
+/* group1N_popl14_table2_19_EmpLs_a3_a4 */
+/*
+ varphi := (!(Emp)) & ((Emp) & (ls(a3, a4)))
+*/
+L254 = OverNotEmp[d0](L_top)
+L255 = OverEmp[d0](L_top)
+L256 = OverLs[d0, a3, a4](L_top)
+L257 = Meet[](L255, L256)
+L258 = Meet[](L254, L257)
+// Outcome: group1N_popl14_table2_19_EmpLs_a3_a4 PosOver@ L258
+
+
+/* group1N_popl14_table2_19_EmpEmp */
+/*
+ varphi := (!(Emp)) & ((Emp) & (Emp))
+*/
+L259 = OverNotEmp[d0](L_top)
+L260 = OverEmp[d0](L_top)
+L261 = Meet[](L260, L260)
+L262 = Meet[](L259, L261)
+// Outcome: group1N_popl14_table2_19_EmpEmp PosOver@ L262
+
+
+/* group1N_popl14_table2_19_EmpTrue */
+/*
+ varphi := (!(Emp)) & (Emp)
+*/
+L263 = OverNotEmp[d0](L_top)
+L264 = OverEmp[d0](L_top)
+L265 = Meet[](L263, L264)
+// Outcome: group1N_popl14_table2_19_EmpTrue PosOver@ L265
+
+
+/* group1N_popl14_table2_19_EmpNotPtsTo_a3_a4 */
+/*
+ varphi := (!(Emp)) & ((Emp) & (!([ a3 |-> a4])))
+*/
+L266 = OverNotEmp[d0](L_top)
+L267 = OverEmp[d0](L_top)
+L268 = OverNotPointsTo[d0, a3, a4](L_top)
+L269 = Meet[](L267, L268)
+L270 = Meet[](L266, L269)
+// Outcome: group1N_popl14_table2_19_EmpNotPtsTo_a3_a4 PosOver@ L270
+
+
+/* group1N_popl14_table2_19_EmpNotLs_a3_a4 */
+/*
+ varphi := (!(Emp)) & ((Emp) & (!(ls(a3, a4))))
+*/
+L271 = OverNotEmp[d0](L_top)
+L272 = OverEmp[d0](L_top)
+L273 = OverNotLs[d0, a3, a4](L_top)
+L274 = Meet[](L272, L273)
+L275 = Meet[](L271, L274)
+// Outcome: group1N_popl14_table2_19_EmpNotLs_a3_a4 PosOver@ L275
+
+
+/* group1N_popl14_table2_19_EmpNotEmp */
+/*
+ varphi := (!(Emp)) & ((Emp) & (!(Emp)))
+*/
+L276 = OverNotEmp[d0](L_top)
+L277 = OverEmp[d0](L_top)
+L278 = Meet[](L277, L276)
+L279 = Meet[](L276, L278)
+// Outcome: group1N_popl14_table2_19_EmpNotEmp PosOver@ L279
+
+
+/* group1N_popl14_table2_19_EmpNotTrue */
+/*
+ varphi := False
+*/
+L280 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_EmpNotTrue PosOver@ L280
+
+
+/* group1N_popl14_table2_19_TruePtsTo_a3_a4 */
+/*
+ varphi := False
+*/
+L281 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TruePtsTo_a3_a4 PosOver@ L281
+
+
+/* group1N_popl14_table2_19_TrueLs_a3_a4 */
+/*
+ varphi := False
+*/
+L282 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueLs_a3_a4 PosOver@ L282
+
+
+/* group1N_popl14_table2_19_TrueEmp */
+/*
+ varphi := False
+*/
+L283 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueEmp PosOver@ L283
+
+
+/* group1N_popl14_table2_19_TrueTrue */
+/*
+ varphi := False
+*/
+L284 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueTrue PosOver@ L284
+
+
+/* group1N_popl14_table2_19_TrueNotPtsTo_a3_a4 */
+/*
+ varphi := False
+*/
+L285 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueNotPtsTo_a3_a4 PosOver@ L285
+
+
+/* group1N_popl14_table2_19_TrueNotLs_a3_a4 */
+/*
+ varphi := False
+*/
+L286 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueNotLs_a3_a4 PosOver@ L286
+
+
+/* group1N_popl14_table2_19_TrueNotEmp */
+/*
+ varphi := False
+*/
+L287 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueNotEmp PosOver@ L287
+
+
+/* group1N_popl14_table2_19_TrueNotTrue */
+/*
+ varphi := False
+*/
+L288 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_TrueNotTrue PosOver@ L288
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2PtsTo_a3_a4 */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * ([ a3 |-> a4])))
+*/
+L289 = OverPointsTo[d0, a1, a2](L_top)
+L290 = OverEmp[d0](L_top)
+L291 = OverNotPointsTo[d0, a1, a2](L_top)
+L292 = RenameRegion[d0, d1](L291)
+L293 = OverPointsTo[d0, a3, a4](L_top)
+L294 = RenameRegion[d0, d2](L293)
+L295 = CopyFrom[d1, d0](L292)
+L296 = CopyFrom[d2, d0](L294)
+L297 = MeetPartitionBoth[d0, d1, d2](L295, L296, L_top)
+L298 = CopyFrom[d1, d0](L297)
+L299 = CopyFrom[d2, d0](L297)
+L300 = Meet3[](L297, L298, L299)
+L301 = UpdateUnion[d0, d1, d2](L300)
+L302 = UpdateUnionAgain[d0, d1, d2](L301)
+L303 = ProjectDownToRegion[d0, d1, d2](L302)
+L304 = Meet[](L290, L303)
+L305 = Meet[](L289, L304)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2PtsTo_a3_a4 PosOver@ L305
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2Ls_a3_a4 */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (ls(a3, a4))))
+*/
+L306 = OverPointsTo[d0, a1, a2](L_top)
+L307 = OverEmp[d0](L_top)
+L308 = OverNotPointsTo[d0, a1, a2](L_top)
+L309 = RenameRegion[d0, d1](L308)
+L310 = OverLs[d0, a3, a4](L_top)
+L311 = RenameRegion[d0, d2](L310)
+L312 = CopyFrom[d1, d0](L309)
+L313 = CopyFrom[d2, d0](L311)
+L314 = MeetPartitionBoth[d0, d1, d2](L312, L313, L_top)
+L315 = CopyFrom[d1, d0](L314)
+L316 = CopyFrom[d2, d0](L314)
+L317 = Meet3[](L314, L315, L316)
+L318 = UpdateUnion[d0, d1, d2](L317)
+L319 = UpdateUnionAgain[d0, d1, d2](L318)
+L320 = ProjectDownToRegion[d0, d1, d2](L319)
+L321 = Meet[](L307, L320)
+L322 = Meet[](L306, L321)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2Ls_a3_a4 PosOver@ L322
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2Emp */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & (!([ a1 |-> a2])))
+*/
+L323 = OverPointsTo[d0, a1, a2](L_top)
+L324 = OverEmp[d0](L_top)
+L325 = OverNotPointsTo[d0, a1, a2](L_top)
+L326 = Meet[](L324, L325)
+L327 = Meet[](L323, L326)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2Emp PosOver@ L327
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2True */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (True)))
+*/
+L328 = OverPointsTo[d0, a1, a2](L_top)
+L329 = OverEmp[d0](L_top)
+L330 = OverNotPointsTo[d0, a1, a2](L_top)
+L331 = RenameRegion[d0, d1](L330)
+L332 = OverTrue[d0](L_top)
+L333 = RenameRegion[d0, d2](L332)
+L334 = CopyFrom[d1, d0](L331)
+L335 = CopyFrom[d2, d0](L333)
+L336 = MeetPartitionBoth[d0, d1, d2](L334, L335, L_top)
+L337 = CopyFrom[d1, d0](L336)
+L338 = CopyFrom[d2, d0](L336)
+L339 = Meet3[](L336, L337, L338)
+L340 = UpdateUnion[d0, d1, d2](L339)
+L341 = UpdateUnionAgain[d0, d1, d2](L340)
+L342 = ProjectDownToRegion[d0, d1, d2](L341)
+L343 = Meet[](L329, L342)
+L344 = Meet[](L328, L343)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2True PosOver@ L344
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2NotPtsTo_a3_a4 */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!([ a3 |-> a4]))))
+*/
+L345 = OverPointsTo[d0, a1, a2](L_top)
+L346 = OverEmp[d0](L_top)
+L347 = OverNotPointsTo[d0, a1, a2](L_top)
+L348 = RenameRegion[d0, d1](L347)
+L349 = OverNotPointsTo[d0, a3, a4](L_top)
+L350 = RenameRegion[d0, d2](L349)
+L351 = CopyFrom[d1, d0](L348)
+L352 = CopyFrom[d2, d0](L350)
+L353 = MeetPartitionBoth[d0, d1, d2](L351, L352, L_top)
+L354 = CopyFrom[d1, d0](L353)
+L355 = CopyFrom[d2, d0](L353)
+L356 = Meet3[](L353, L354, L355)
+L357 = UpdateUnion[d0, d1, d2](L356)
+L358 = UpdateUnionAgain[d0, d1, d2](L357)
+L359 = ProjectDownToRegion[d0, d1, d2](L358)
+L360 = Meet[](L346, L359)
+L361 = Meet[](L345, L360)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2NotPtsTo_a3_a4 PosOver@ L361
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2NotLs_a3_a4 */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!(ls(a3, a4)))))
+*/
+L362 = OverPointsTo[d0, a1, a2](L_top)
+L363 = OverEmp[d0](L_top)
+L364 = OverNotPointsTo[d0, a1, a2](L_top)
+L365 = RenameRegion[d0, d1](L364)
+L366 = OverNotLs[d0, a3, a4](L_top)
+L367 = RenameRegion[d0, d2](L366)
+L368 = CopyFrom[d1, d0](L365)
+L369 = CopyFrom[d2, d0](L367)
+L370 = MeetPartitionBoth[d0, d1, d2](L368, L369, L_top)
+L371 = CopyFrom[d1, d0](L370)
+L372 = CopyFrom[d2, d0](L370)
+L373 = Meet3[](L370, L371, L372)
+L374 = UpdateUnion[d0, d1, d2](L373)
+L375 = UpdateUnionAgain[d0, d1, d2](L374)
+L376 = ProjectDownToRegion[d0, d1, d2](L375)
+L377 = Meet[](L363, L376)
+L378 = Meet[](L362, L377)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2NotLs_a3_a4 PosOver@ L378
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2NotEmp */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (!(Emp))))
+*/
+L379 = OverPointsTo[d0, a1, a2](L_top)
+L380 = OverEmp[d0](L_top)
+L381 = OverNotPointsTo[d0, a1, a2](L_top)
+L382 = RenameRegion[d0, d1](L381)
+L383 = OverNotEmp[d0](L_top)
+L384 = RenameRegion[d0, d2](L383)
+L385 = CopyFrom[d1, d0](L382)
+L386 = CopyFrom[d2, d0](L384)
+L387 = MeetPartitionBoth[d0, d1, d2](L385, L386, L_top)
+L388 = CopyFrom[d1, d0](L387)
+L389 = CopyFrom[d2, d0](L387)
+L390 = Meet3[](L387, L388, L389)
+L391 = UpdateUnion[d0, d1, d2](L390)
+L392 = UpdateUnionAgain[d0, d1, d2](L391)
+L393 = ProjectDownToRegion[d0, d1, d2](L392)
+L394 = Meet[](L380, L393)
+L395 = Meet[](L379, L394)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2NotEmp PosOver@ L395
+
+
+/* group1N_popl14_table2_19_NotPtsTo_a1_a2NotTrue */
+/*
+ varphi := ([ a1 |-> a2]) & ((Emp) & ((!([ a1 |-> a2])) * (False)))
+*/
+L396 = OverPointsTo[d0, a1, a2](L_top)
+L397 = OverEmp[d0](L_top)
+L398 = OverNotPointsTo[d0, a1, a2](L_top)
+L399 = RenameRegion[d0, d1](L398)
+L400 = OverFalse[d0](L_top)
+L401 = RenameRegion[d0, d2](L400)
+L402 = CopyFrom[d1, d0](L399)
+L403 = CopyFrom[d2, d0](L401)
+L404 = MeetPartitionBoth[d0, d1, d2](L402, L403, L_top)
+L405 = CopyFrom[d1, d0](L404)
+L406 = CopyFrom[d2, d0](L404)
+L407 = Meet3[](L404, L405, L406)
+L408 = UpdateUnion[d0, d1, d2](L407)
+L409 = UpdateUnionAgain[d0, d1, d2](L408)
+L410 = ProjectDownToRegion[d0, d1, d2](L409)
+L411 = Meet[](L397, L410)
+L412 = Meet[](L396, L411)
+// Outcome: group1N_popl14_table2_19_NotPtsTo_a1_a2NotTrue PosOver@ L412
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2PtsTo_a3_a4 */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * ([ a3 |-> a4])))
+*/
+L413 = OverLs[d0, a1, a2](L_top)
+L414 = OverEmp[d0](L_top)
+L415 = OverNotLs[d0, a1, a2](L_top)
+L416 = RenameRegion[d0, d1](L415)
+L417 = OverPointsTo[d0, a3, a4](L_top)
+L418 = RenameRegion[d0, d2](L417)
+L419 = CopyFrom[d1, d0](L416)
+L420 = CopyFrom[d2, d0](L418)
+L421 = MeetPartitionBoth[d0, d1, d2](L419, L420, L_top)
+L422 = CopyFrom[d1, d0](L421)
+L423 = CopyFrom[d2, d0](L421)
+L424 = Meet3[](L421, L422, L423)
+L425 = UpdateUnion[d0, d1, d2](L424)
+L426 = UpdateUnionAgain[d0, d1, d2](L425)
+L427 = ProjectDownToRegion[d0, d1, d2](L426)
+L428 = Meet[](L414, L427)
+L429 = Meet[](L413, L428)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2PtsTo_a3_a4 PosOver@ L429
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2Ls_a3_a4 */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (ls(a3, a4))))
+*/
+L430 = OverLs[d0, a1, a2](L_top)
+L431 = OverEmp[d0](L_top)
+L432 = OverNotLs[d0, a1, a2](L_top)
+L433 = RenameRegion[d0, d1](L432)
+L434 = OverLs[d0, a3, a4](L_top)
+L435 = RenameRegion[d0, d2](L434)
+L436 = CopyFrom[d1, d0](L433)
+L437 = CopyFrom[d2, d0](L435)
+L438 = MeetPartitionBoth[d0, d1, d2](L436, L437, L_top)
+L439 = CopyFrom[d1, d0](L438)
+L440 = CopyFrom[d2, d0](L438)
+L441 = Meet3[](L438, L439, L440)
+L442 = UpdateUnion[d0, d1, d2](L441)
+L443 = UpdateUnionAgain[d0, d1, d2](L442)
+L444 = ProjectDownToRegion[d0, d1, d2](L443)
+L445 = Meet[](L431, L444)
+L446 = Meet[](L430, L445)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2Ls_a3_a4 PosOver@ L446
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2Emp */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & (!(ls(a1, a2))))
+*/
+L447 = OverLs[d0, a1, a2](L_top)
+L448 = OverEmp[d0](L_top)
+L449 = OverNotLs[d0, a1, a2](L_top)
+L450 = Meet[](L448, L449)
+L451 = Meet[](L447, L450)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2Emp PosOver@ L451
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2True */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (True)))
+*/
+L452 = OverLs[d0, a1, a2](L_top)
+L453 = OverEmp[d0](L_top)
+L454 = OverNotLs[d0, a1, a2](L_top)
+L455 = RenameRegion[d0, d1](L454)
+L456 = OverTrue[d0](L_top)
+L457 = RenameRegion[d0, d2](L456)
+L458 = CopyFrom[d1, d0](L455)
+L459 = CopyFrom[d2, d0](L457)
+L460 = MeetPartitionBoth[d0, d1, d2](L458, L459, L_top)
+L461 = CopyFrom[d1, d0](L460)
+L462 = CopyFrom[d2, d0](L460)
+L463 = Meet3[](L460, L461, L462)
+L464 = UpdateUnion[d0, d1, d2](L463)
+L465 = UpdateUnionAgain[d0, d1, d2](L464)
+L466 = ProjectDownToRegion[d0, d1, d2](L465)
+L467 = Meet[](L453, L466)
+L468 = Meet[](L452, L467)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2True PosOver@ L468
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2NotPtsTo_a3_a4 */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!([ a3 |-> a4]))))
+*/
+L469 = OverLs[d0, a1, a2](L_top)
+L470 = OverEmp[d0](L_top)
+L471 = OverNotLs[d0, a1, a2](L_top)
+L472 = RenameRegion[d0, d1](L471)
+L473 = OverNotPointsTo[d0, a3, a4](L_top)
+L474 = RenameRegion[d0, d2](L473)
+L475 = CopyFrom[d1, d0](L472)
+L476 = CopyFrom[d2, d0](L474)
+L477 = MeetPartitionBoth[d0, d1, d2](L475, L476, L_top)
+L478 = CopyFrom[d1, d0](L477)
+L479 = CopyFrom[d2, d0](L477)
+L480 = Meet3[](L477, L478, L479)
+L481 = UpdateUnion[d0, d1, d2](L480)
+L482 = UpdateUnionAgain[d0, d1, d2](L481)
+L483 = ProjectDownToRegion[d0, d1, d2](L482)
+L484 = Meet[](L470, L483)
+L485 = Meet[](L469, L484)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2NotPtsTo_a3_a4 PosOver@ L485
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2NotLs_a3_a4 */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!(ls(a3, a4)))))
+*/
+L486 = OverLs[d0, a1, a2](L_top)
+L487 = OverEmp[d0](L_top)
+L488 = OverNotLs[d0, a1, a2](L_top)
+L489 = RenameRegion[d0, d1](L488)
+L490 = OverNotLs[d0, a3, a4](L_top)
+L491 = RenameRegion[d0, d2](L490)
+L492 = CopyFrom[d1, d0](L489)
+L493 = CopyFrom[d2, d0](L491)
+L494 = MeetPartitionBoth[d0, d1, d2](L492, L493, L_top)
+L495 = CopyFrom[d1, d0](L494)
+L496 = CopyFrom[d2, d0](L494)
+L497 = Meet3[](L494, L495, L496)
+L498 = UpdateUnion[d0, d1, d2](L497)
+L499 = UpdateUnionAgain[d0, d1, d2](L498)
+L500 = ProjectDownToRegion[d0, d1, d2](L499)
+L501 = Meet[](L487, L500)
+L502 = Meet[](L486, L501)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2NotLs_a3_a4 PosOver@ L502
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2NotEmp */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (!(Emp))))
+*/
+L503 = OverLs[d0, a1, a2](L_top)
+L504 = OverEmp[d0](L_top)
+L505 = OverNotLs[d0, a1, a2](L_top)
+L506 = RenameRegion[d0, d1](L505)
+L507 = OverNotEmp[d0](L_top)
+L508 = RenameRegion[d0, d2](L507)
+L509 = CopyFrom[d1, d0](L506)
+L510 = CopyFrom[d2, d0](L508)
+L511 = MeetPartitionBoth[d0, d1, d2](L509, L510, L_top)
+L512 = CopyFrom[d1, d0](L511)
+L513 = CopyFrom[d2, d0](L511)
+L514 = Meet3[](L511, L512, L513)
+L515 = UpdateUnion[d0, d1, d2](L514)
+L516 = UpdateUnionAgain[d0, d1, d2](L515)
+L517 = ProjectDownToRegion[d0, d1, d2](L516)
+L518 = Meet[](L504, L517)
+L519 = Meet[](L503, L518)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2NotEmp PosOver@ L519
+
+
+/* group1N_popl14_table2_19_NotLs_a1_a2NotTrue */
+/*
+ varphi := (ls(a1, a2)) & ((Emp) & ((!(ls(a1, a2))) * (False)))
+*/
+L520 = OverLs[d0, a1, a2](L_top)
+L521 = OverEmp[d0](L_top)
+L522 = OverNotLs[d0, a1, a2](L_top)
+L523 = RenameRegion[d0, d1](L522)
+L524 = OverFalse[d0](L_top)
+L525 = RenameRegion[d0, d2](L524)
+L526 = CopyFrom[d1, d0](L523)
+L527 = CopyFrom[d2, d0](L525)
+L528 = MeetPartitionBoth[d0, d1, d2](L526, L527, L_top)
+L529 = CopyFrom[d1, d0](L528)
+L530 = CopyFrom[d2, d0](L528)
+L531 = Meet3[](L528, L529, L530)
+L532 = UpdateUnion[d0, d1, d2](L531)
+L533 = UpdateUnionAgain[d0, d1, d2](L532)
+L534 = ProjectDownToRegion[d0, d1, d2](L533)
+L535 = Meet[](L521, L534)
+L536 = Meet[](L520, L535)
+// Outcome: group1N_popl14_table2_19_NotLs_a1_a2NotTrue PosOver@ L536
+
+
+/* group1N_popl14_table2_19_NotEmpPtsTo_a3_a4 */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * ([ a3 |-> a4])))
+*/
+L537 = OverEmp[d0](L_top)
+L538 = OverNotEmp[d0](L_top)
+L539 = RenameRegion[d0, d1](L538)
+L540 = OverPointsTo[d0, a3, a4](L_top)
+L541 = RenameRegion[d0, d2](L540)
+L542 = CopyFrom[d1, d0](L539)
+L543 = CopyFrom[d2, d0](L541)
+L544 = MeetPartitionBoth[d0, d1, d2](L542, L543, L_top)
+L545 = CopyFrom[d1, d0](L544)
+L546 = CopyFrom[d2, d0](L544)
+L547 = Meet3[](L544, L545, L546)
+L548 = UpdateUnion[d0, d1, d2](L547)
+L549 = UpdateUnionAgain[d0, d1, d2](L548)
+L550 = ProjectDownToRegion[d0, d1, d2](L549)
+L551 = Meet[](L537, L550)
+L552 = Meet[](L537, L551)
+// Outcome: group1N_popl14_table2_19_NotEmpPtsTo_a3_a4 PosOver@ L552
+
+
+/* group1N_popl14_table2_19_NotEmpLs_a3_a4 */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (ls(a3, a4))))
+*/
+L553 = OverEmp[d0](L_top)
+L554 = OverNotEmp[d0](L_top)
+L555 = RenameRegion[d0, d1](L554)
+L556 = OverLs[d0, a3, a4](L_top)
+L557 = RenameRegion[d0, d2](L556)
+L558 = CopyFrom[d1, d0](L555)
+L559 = CopyFrom[d2, d0](L557)
+L560 = MeetPartitionBoth[d0, d1, d2](L558, L559, L_top)
+L561 = CopyFrom[d1, d0](L560)
+L562 = CopyFrom[d2, d0](L560)
+L563 = Meet3[](L560, L561, L562)
+L564 = UpdateUnion[d0, d1, d2](L563)
+L565 = UpdateUnionAgain[d0, d1, d2](L564)
+L566 = ProjectDownToRegion[d0, d1, d2](L565)
+L567 = Meet[](L553, L566)
+L568 = Meet[](L553, L567)
+// Outcome: group1N_popl14_table2_19_NotEmpLs_a3_a4 PosOver@ L568
+
+
+/* group1N_popl14_table2_19_NotEmpEmp */
+/*
+ varphi := (Emp) & ((Emp) & (!(Emp)))
+*/
+L569 = OverEmp[d0](L_top)
+L570 = OverNotEmp[d0](L_top)
+L571 = Meet[](L569, L570)
+L572 = Meet[](L569, L571)
+// Outcome: group1N_popl14_table2_19_NotEmpEmp PosOver@ L572
+
+
+/* group1N_popl14_table2_19_NotEmpTrue */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (True)))
+*/
+L573 = OverEmp[d0](L_top)
+L574 = OverNotEmp[d0](L_top)
+L575 = RenameRegion[d0, d1](L574)
+L576 = OverTrue[d0](L_top)
+L577 = RenameRegion[d0, d2](L576)
+L578 = CopyFrom[d1, d0](L575)
+L579 = CopyFrom[d2, d0](L577)
+L580 = MeetPartitionBoth[d0, d1, d2](L578, L579, L_top)
+L581 = CopyFrom[d1, d0](L580)
+L582 = CopyFrom[d2, d0](L580)
+L583 = Meet3[](L580, L581, L582)
+L584 = UpdateUnion[d0, d1, d2](L583)
+L585 = UpdateUnionAgain[d0, d1, d2](L584)
+L586 = ProjectDownToRegion[d0, d1, d2](L585)
+L587 = Meet[](L573, L586)
+L588 = Meet[](L573, L587)
+// Outcome: group1N_popl14_table2_19_NotEmpTrue PosOver@ L588
+
+
+/* group1N_popl14_table2_19_NotEmpNotPtsTo_a3_a4 */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (!([ a3 |-> a4]))))
+*/
+L589 = OverEmp[d0](L_top)
+L590 = OverNotEmp[d0](L_top)
+L591 = RenameRegion[d0, d1](L590)
+L592 = OverNotPointsTo[d0, a3, a4](L_top)
+L593 = RenameRegion[d0, d2](L592)
+L594 = CopyFrom[d1, d0](L591)
+L595 = CopyFrom[d2, d0](L593)
+L596 = MeetPartitionBoth[d0, d1, d2](L594, L595, L_top)
+L597 = CopyFrom[d1, d0](L596)
+L598 = CopyFrom[d2, d0](L596)
+L599 = Meet3[](L596, L597, L598)
+L600 = UpdateUnion[d0, d1, d2](L599)
+L601 = UpdateUnionAgain[d0, d1, d2](L600)
+L602 = ProjectDownToRegion[d0, d1, d2](L601)
+L603 = Meet[](L589, L602)
+L604 = Meet[](L589, L603)
+// Outcome: group1N_popl14_table2_19_NotEmpNotPtsTo_a3_a4 PosOver@ L604
+
+
+/* group1N_popl14_table2_19_NotEmpNotLs_a3_a4 */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (!(ls(a3, a4)))))
+*/
+L605 = OverEmp[d0](L_top)
+L606 = OverNotEmp[d0](L_top)
+L607 = RenameRegion[d0, d1](L606)
+L608 = OverNotLs[d0, a3, a4](L_top)
+L609 = RenameRegion[d0, d2](L608)
+L610 = CopyFrom[d1, d0](L607)
+L611 = CopyFrom[d2, d0](L609)
+L612 = MeetPartitionBoth[d0, d1, d2](L610, L611, L_top)
+L613 = CopyFrom[d1, d0](L612)
+L614 = CopyFrom[d2, d0](L612)
+L615 = Meet3[](L612, L613, L614)
+L616 = UpdateUnion[d0, d1, d2](L615)
+L617 = UpdateUnionAgain[d0, d1, d2](L616)
+L618 = ProjectDownToRegion[d0, d1, d2](L617)
+L619 = Meet[](L605, L618)
+L620 = Meet[](L605, L619)
+// Outcome: group1N_popl14_table2_19_NotEmpNotLs_a3_a4 PosOver@ L620
+
+
+/* group1N_popl14_table2_19_NotEmpNotEmp */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (!(Emp))))
+*/
+L621 = OverEmp[d0](L_top)
+L622 = OverNotEmp[d0](L_top)
+L623 = RenameRegion[d0, d1](L622)
+L624 = RenameRegion[d0, d2](L622)
+L625 = CopyFrom[d1, d0](L623)
+L626 = CopyFrom[d2, d0](L624)
+L627 = MeetPartitionBoth[d0, d1, d2](L625, L626, L_top)
+L628 = CopyFrom[d1, d0](L627)
+L629 = CopyFrom[d2, d0](L627)
+L630 = Meet3[](L627, L628, L629)
+L631 = UpdateUnion[d0, d1, d2](L630)
+L632 = UpdateUnionAgain[d0, d1, d2](L631)
+L633 = ProjectDownToRegion[d0, d1, d2](L632)
+L634 = Meet[](L621, L633)
+L635 = Meet[](L621, L634)
+// Outcome: group1N_popl14_table2_19_NotEmpNotEmp PosOver@ L635
+
+
+/* group1N_popl14_table2_19_NotEmpNotTrue */
+/*
+ varphi := (Emp) & ((Emp) & ((!(Emp)) * (False)))
+*/
+L636 = OverEmp[d0](L_top)
+L637 = OverNotEmp[d0](L_top)
+L638 = RenameRegion[d0, d1](L637)
+L639 = OverFalse[d0](L_top)
+L640 = RenameRegion[d0, d2](L639)
+L641 = CopyFrom[d1, d0](L638)
+L642 = CopyFrom[d2, d0](L640)
+L643 = MeetPartitionBoth[d0, d1, d2](L641, L642, L_top)
+L644 = CopyFrom[d1, d0](L643)
+L645 = CopyFrom[d2, d0](L643)
+L646 = Meet3[](L643, L644, L645)
+L647 = UpdateUnion[d0, d1, d2](L646)
+L648 = UpdateUnionAgain[d0, d1, d2](L647)
+L649 = ProjectDownToRegion[d0, d1, d2](L648)
+L650 = Meet[](L636, L649)
+L651 = Meet[](L636, L650)
+// Outcome: group1N_popl14_table2_19_NotEmpNotTrue PosOver@ L651
+
+
+/* group1N_popl14_table2_19_NotTruePtsTo_a3_a4 */
+/*
+ varphi := (Emp) & ((False) * ([ a3 |-> a4]))
+*/
+L652 = OverEmp[d0](L_top)
+L653 = OverFalse[d0](L_top)
+L654 = RenameRegion[d0, d1](L653)
+L655 = OverPointsTo[d0, a3, a4](L_top)
+L656 = RenameRegion[d0, d2](L655)
+L657 = CopyFrom[d1, d0](L654)
+L658 = CopyFrom[d2, d0](L656)
+L659 = MeetPartitionBoth[d0, d1, d2](L657, L658, L_top)
+L660 = CopyFrom[d1, d0](L659)
+L661 = CopyFrom[d2, d0](L659)
+L662 = Meet3[](L659, L660, L661)
+L663 = UpdateUnion[d0, d1, d2](L662)
+L664 = UpdateUnionAgain[d0, d1, d2](L663)
+L665 = ProjectDownToRegion[d0, d1, d2](L664)
+L666 = Meet[](L652, L665)
+// Outcome: group1N_popl14_table2_19_NotTruePtsTo_a3_a4 PosOver@ L666
+
+
+/* group1N_popl14_table2_19_NotTrueLs_a3_a4 */
+/*
+ varphi := (Emp) & ((False) * (ls(a3, a4)))
+*/
+L667 = OverEmp[d0](L_top)
+L668 = OverFalse[d0](L_top)
+L669 = RenameRegion[d0, d1](L668)
+L670 = OverLs[d0, a3, a4](L_top)
+L671 = RenameRegion[d0, d2](L670)
+L672 = CopyFrom[d1, d0](L669)
+L673 = CopyFrom[d2, d0](L671)
+L674 = MeetPartitionBoth[d0, d1, d2](L672, L673, L_top)
+L675 = CopyFrom[d1, d0](L674)
+L676 = CopyFrom[d2, d0](L674)
+L677 = Meet3[](L674, L675, L676)
+L678 = UpdateUnion[d0, d1, d2](L677)
+L679 = UpdateUnionAgain[d0, d1, d2](L678)
+L680 = ProjectDownToRegion[d0, d1, d2](L679)
+L681 = Meet[](L667, L680)
+// Outcome: group1N_popl14_table2_19_NotTrueLs_a3_a4 PosOver@ L681
+
+
+/* group1N_popl14_table2_19_NotTrueEmp */
+/*
+ varphi := False
+*/
+L682 = OverFalse[d0](L_top)
+// Outcome: group1N_popl14_table2_19_NotTrueEmp PosOver@ L682
+
+
+/* group1N_popl14_table2_19_NotTrueTrue */
+/*
+ varphi := (Emp) & ((False) * (True))
+*/
+L683 = OverEmp[d0](L_top)
+L684 = OverFalse[d0](L_top)
+L685 = RenameRegion[d0, d1](L684)
+L686 = OverTrue[d0](L_top)
+L687 = RenameRegion[d0, d2](L686)
+L688 = CopyFrom[d1, d0](L685)
+L689 = CopyFrom[d2, d0](L687)
+L690 = MeetPartitionBoth[d0, d1, d2](L688, L689, L_top)
+L691 = CopyFrom[d1, d0](L690)
+L692 = CopyFrom[d2, d0](L690)
+L693 = Meet3[](L690, L691, L692)
+L694 = UpdateUnion[d0, d1, d2](L693)
+L695 = UpdateUnionAgain[d0, d1, d2](L694)
+L696 = ProjectDownToRegion[d0, d1, d2](L695)
+L697 = Meet[](L683, L696)
+// Outcome: group1N_popl14_table2_19_NotTrueTrue PosOver@ L697
+
+
+/* group1N_popl14_table2_19_NotTrueNotPtsTo_a3_a4 */
+/*
+ varphi := (Emp) & ((False) * (!([ a3 |-> a4])))
+*/
+L698 = OverEmp[d0](L_top)
+L699 = OverFalse[d0](L_top)
+L700 = RenameRegion[d0, d1](L699)
+L701 = OverNotPointsTo[d0, a3, a4](L_top)
+L702 = RenameRegion[d0, d2](L701)
+L703 = CopyFrom[d1, d0](L700)
+L704 = CopyFrom[d2, d0](L702)
+L705 = MeetPartitionBoth[d0, d1, d2](L703, L704, L_top)
+L706 = CopyFrom[d1, d0](L705)
+L707 = CopyFrom[d2, d0](L705)
+L708 = Meet3[](L705, L706, L707)
+L709 = UpdateUnion[d0, d1, d2](L708)
+L710 = UpdateUnionAgain[d0, d1, d2](L709)
+L711 = ProjectDownToRegion[d0, d1, d2](L710)
+L712 = Meet[](L698, L711)
+// Outcome: group1N_popl14_table2_19_NotTrueNotPtsTo_a3_a4 PosOver@ L712
+
+
+/* group1N_popl14_table2_19_NotTrueNotLs_a3_a4 */
+/*
+ varphi := (Emp) & ((False) * (!(ls(a3, a4))))
+*/
+L713 = OverEmp[d0](L_top)
+L714 = OverFalse[d0](L_top)
+L715 = RenameRegion[d0, d1](L714)
+L716 = OverNotLs[d0, a3, a4](L_top)
+L717 = RenameRegion[d0, d2](L716)
+L718 = CopyFrom[d1, d0](L715)
+L719 = CopyFrom[d2, d0](L717)
+L720 = MeetPartitionBoth[d0, d1, d2](L718, L719, L_top)
+L721 = CopyFrom[d1, d0](L720)
+L722 = CopyFrom[d2, d0](L720)
+L723 = Meet3[](L720, L721, L722)
+L724 = UpdateUnion[d0, d1, d2](L723)
+L725 = UpdateUnionAgain[d0, d1, d2](L724)
+L726 = ProjectDownToRegion[d0, d1, d2](L725)
+L727 = Meet[](L713, L726)
+// Outcome: group1N_popl14_table2_19_NotTrueNotLs_a3_a4 PosOver@ L727
+
+
+/* group1N_popl14_table2_19_NotTrueNotEmp */
+/*
+ varphi := (Emp) & ((False) * (!(Emp)))
+*/
+L728 = OverEmp[d0](L_top)
+L729 = OverFalse[d0](L_top)
+L730 = RenameRegion[d0, d1](L729)
+L731 = OverNotEmp[d0](L_top)
+L732 = RenameRegion[d0, d2](L731)
+L733 = CopyFrom[d1, d0](L730)
+L734 = CopyFrom[d2, d0](L732)
+L735 = MeetPartitionBoth[d0, d1, d2](L733, L734, L_top)
+L736 = CopyFrom[d1, d0](L735)
+L737 = CopyFrom[d2, d0](L735)
+L738 = Meet3[](L735, L736, L737)
+L739 = UpdateUnion[d0, d1, d2](L738)
+L740 = UpdateUnionAgain[d0, d1, d2](L739)
+L741 = ProjectDownToRegion[d0, d1, d2](L740)
+L742 = Meet[](L728, L741)
+// Outcome: group1N_popl14_table2_19_NotTrueNotEmp PosOver@ L742
+
+
+/* group1N_popl14_table2_19_NotTrueNotTrue */
+/*
+ varphi := (Emp) & ((False) * (False))
+*/
+L743 = OverEmp[d0](L_top)
+L744 = OverFalse[d0](L_top)
+L745 = RenameRegion[d0, d1](L744)
+L746 = RenameRegion[d0, d2](L744)
+L747 = CopyFrom[d1, d0](L745)
+L748 = CopyFrom[d2, d0](L746)
+L749 = MeetPartitionBoth[d0, d1, d2](L747, L748, L_top)
+L750 = CopyFrom[d1, d0](L749)
+L751 = CopyFrom[d2, d0](L749)
+L752 = Meet3[](L749, L750, L751)
+L753 = UpdateUnion[d0, d1, d2](L752)
+L754 = UpdateUnionAgain[d0, d1, d2](L753)
+L755 = ProjectDownToRegion[d0, d1, d2](L754)
+L756 = Meet[](L743, L755)
+// Outcome: group1N_popl14_table2_19_NotTrueNotTrue PosOver@ L756
+
+
+
+%% 
+
+///////////////////////////////////////////////////////////////////////// 
+// Display only structures that arise at the following program locations.
+L17 L34 L39 L56 L73 L90 L107 L124 L141 L158 L163 L180 L197 L214 L231 L248 L253 L258 L262 L265 L270 L275 L279 L280 L281 L282 L283 L284 L285 L286 L287 L288 L305 L322 L327 L344 L361 L378 L395 L412 L429 L446 L451 L468 L485 L502 L519 L536 L552 L568 L572 L588 L604 L620 L635 L651 L666 L681 L682 L697 L712 L727 L742 L756 

@@ -1,0 +1,318 @@
+// @author Tal Lev-Ami.
+// @since 9.5.2001 Added the characters '$' and '.' to identifiers (Roman).
+package tvla.language.TVS;
+
+import tvla.core.*;
+import tvla.jeannet.language.*;
+import tvla.logic.*;
+import tvla.predicates.*;
+import tvla.util.*;
+import com.ibm.dk.dps.io.CPreProcessorStream;
+import java.io.*;
+import java.util.*;
+
+/** A scanner for TVS formatted files.
+ * @author Tal Lev-Ami
+ */
+
+action code {:
+    TVS structure;
+    String predicateName;
+    Predicate predicate;
+    Map nodes;
+:}
+
+parser code {:
+    static TVSLex scanner;
+    static CPreProcessorStream stream;
+
+    public void report_error(String message, Object info) {
+	Logger.println(message + " in line " + stream.getLine(scanner.line_count) + 
+			" of file " + stream.getFile(scanner.line_count));
+    }
+    
+    /** Reads a list of locations from a TVS formatted input file.
+     * @author Roman Manevich
+     */
+    public static List readLocations(String file) throws Exception {
+		String infileName = file;
+		if (!infileName.endsWith(".tvs")) {
+			infileName = infileName + ".tvs";
+		}
+		stream = new CPreProcessorStream(infileName);
+		AddMacrosToPreProcessor.add(stream);
+
+		scanner = new TVSLex(new InputStreamReader(stream));
+		tvla.jeannet.language.TVS.parser parser = new tvla.jeannet.language.TVS.parser(scanner);
+		List answer = (List)parser.parse().value;
+
+		// do cleanups
+		scanner = null;
+		stream = null;
+
+		return answer;
+    }	
+
+    /** Reads a list of structures from a TVS formatted input file.
+     * @author Tal Lev-Ami
+     */
+    public static List readStructures(String file) throws Exception {
+		String infileName = file;
+		if (!infileName.endsWith(".tvs")) {
+			infileName = infileName + ".tvs";
+		}
+		stream = new CPreProcessorStream(infileName);
+		AddMacrosToPreProcessor.add(stream);
+		
+		scanner = new TVSLex(new InputStreamReader(stream));
+		tvla.jeannet.language.TVS.parser parser = new tvla.jeannet.language.TVS.parser(scanner);
+		List answer = (List) parser.parse().value;
+
+		// do cleanups
+		scanner = null;
+		stream = null;
+
+		return answer;
+	}
+:}
+
+terminal DESCRIPTION;
+terminal String ID, STRING;
+terminal Kleene TRUE, FALSE, UNKNOWN;
+terminal NODES, ASSIGN, LCBR, RCBR, ONE, ZERO, COMMA, LBR, RBR, COLON, ARROW, PREDICATES, LOCATION, MESSAGE;
+terminal LP,RP;
+terminal THREADS;
+terminal AUTINIT;
+
+non terminal List structures, messages, node_list, element_list, pred_list, thread_list;
+non terminal List tvs, locations;
+non terminal Pair location;
+non terminal structure, nodes, iota;
+non terminal String node, element, pred, message;
+non terminal entry, optional_entry_list, entry_list, pred_val, pred_vals;
+non terminal Kleene value, val;
+non terminal Symbol symbol;
+
+start with tvs;
+
+tvs	::=	locations:l		/* a non-empty list of locations */
+		{: RESULT = l; :}
+	;
+
+/***********************************************************/
+
+locations	::= location:loc
+		{: RESULT = new ArrayList();
+		   RESULT.add(loc);
+		:}
+		| locations:list location:loc
+		{: list.add(loc); RESULT = list; :}
+		;
+
+location	::= LOCATION symbol:id ASSIGN LCBR structures:stores RCBR
+		{: TVSSet set = TVSFactory.getInstance().makeEmptySet();
+		   for (Iterator i = stores.iterator(); i.hasNext(); )
+		       set.mergeWith( (HighLevelTVS)i.next() );
+		   RESULT = new Pair(id,set);
+		:}
+		;
+		
+structures	::=	/* empty */
+		{: RESULT = new ArrayList(); :}
+        	|	structures:list structure
+		{: RESULT = list; RESULT.add(structure); structure = null; :}
+                |	structures:list COMMA structure
+		{: RESULT = list; RESULT.add(structure); structure = null; :}
+	        ;
+
+structure ::=   {:
+			structure = TVSFactory.getInstance().makeEmptyTVS();
+			nodes = new HashMap();
+		:} 
+		nodes iota
+		;
+   
+nodes::=	NODES ASSIGN LCBR RCBR
+	|	NODES ASSIGN LCBR node_list:list RCBR
+	{:
+		for (Iterator i = list.iterator(); i.hasNext(); ) {
+			String e = (String)i.next();
+			Node node = structure.newNode();
+			nodes.put(e, node);
+		}
+	:}
+	;
+
+node_list	::= node:e
+		{: RESULT = new ArrayList(); RESULT.add(e); :}
+          	| node_list:prev COMMA node:e
+		{: RESULT = prev; RESULT.add(e); :}
+	  	;
+
+element_list	::= element:e
+		{: RESULT = new ArrayList(); RESULT.add(e); :}
+          	| element_list:prev COMMA  element:e
+		{: RESULT = prev; RESULT.add(e); :}
+	  	;
+
+node	  ::= element:e
+	{: RESULT = e; :}
+	;
+
+element   ::= ID:id
+	  {: RESULT = id; :}
+          | element:e ONE
+	  {: RESULT = e + ".1"; :}
+          | element:e ZERO
+	  {: RESULT = e + ".0"; :}
+          | LBR element_list:list RBR
+	  {: RESULT = "[";
+	     String sep = "";
+	     for (Iterator i = list.iterator(); i.hasNext(); ) {
+		String e = (String) i.next();
+		RESULT = RESULT + sep + e;
+		sep = ",";
+	     }
+	     RESULT = RESULT + "]";
+	  :}
+          ;   
+
+
+
+/*******************************************************/
+
+symbol ::= 	ID:id
+                {: RESULT = Symbol.ofString(id); :}
+	|	STRING:id
+                {: RESULT = Symbol.ofString(id); :}
+	;		
+
+iota     ::= PREDICATES ASSIGN LCBR pred_vals RCBR
+         ;
+
+pred_vals ::=  /* empty */
+         |  pred_vals pred_val 	
+	 ;
+
+pred   ::= ID:id
+	  {: RESULT = id; :}
+          | ID:id LBR pred_list:list RBR
+	  {: RESULT = id + "[";
+	     String sep = "";
+	     for (Iterator i = list.iterator(); i.hasNext(); ) {
+		String e = (String) i.next();
+		RESULT = RESULT + sep + e;
+		sep = ",";
+	     }
+	     RESULT = RESULT + "]";
+	  :}
+          ;   
+
+pred_list ::=	ID:p
+		{: RESULT = new ArrayList(); RESULT.add(p); :}
+          	| pred_list:prev COMMA  ID:p
+		{: RESULT = prev; RESULT.add(p); :}
+	  	;
+
+pred_val::= pred:p ASSIGN {: predicateName = p; :} LCBR optional_entry_list RCBR
+	{: predicate = null; :}
+        | pred:p ASSIGN val:k /* a nullary predicate */
+	{:  Predicate nullaryPredicate = Vocabulary.getPredicateByName(p);
+	    if (nullaryPredicate == null || nullaryPredicate.arity() != 0)
+			parser.report_fatal_error("Predicate " + p + 
+			" was used but not declared as a nullary predicate", null);
+	    structure.update(nullaryPredicate, k); 
+	:}
+        ;
+
+optional_entry_list ::= /* empty */
+	| entry_list
+	;
+
+entry_list ::= entry
+          | entry_list COMMA entry
+          ;
+
+entry    ::= node:n  value:k /* a unary predicate */
+	{: if (predicate == null) {
+	    predicate = Vocabulary.getPredicateByName(predicateName);
+	    if (predicate == null || predicate.arity() != 1)
+			parser.report_fatal_error("Predicate " + predicateName + 
+			" was used but not declared as a unary predicate", null);
+	   } 
+	   else if (predicate.arity() != 1) {
+		parser.report_fatal_error("Using " + predicate.arity() + 
+					  "-ary predicate with unary assignments", null);
+	   }
+	   Node node = (Node) nodes.get(n);
+	   if (node == null)
+		parser.report_fatal_error("Node " + n + " was not declared.", null); 
+	   structure.update(predicate, node, k);
+	:}
+         | node:l ARROW node:r value:k /* a binary predicate (support old syntax) */
+	{: if (predicate == null) {
+	    predicate = Vocabulary.getPredicateByName(predicateName);
+	    if (predicate == null || predicate.arity() != 2)
+			parser.report_fatal_error("Predicate " + predicateName + 
+			" was used but not declared as a binary predicate", null);
+	   } 
+	   else if (predicate.arity() != 2) {
+		parser.report_fatal_error("Using " + predicate.arity() + 
+					  "-ary predicate with binary assignments", null);
+	   }
+	   Node left = (Node) nodes.get(l);
+	   if (left == null)
+		parser.report_fatal_error("Node " + l + " was not declared.", null); 
+	   Node right = (Node) nodes.get(r);
+	   if (right == null)
+		parser.report_fatal_error("Node " + r + " was not declared.", null); 
+	   structure.update(predicate, left, right, k);
+	:}
+		| LP node_list:nl RP value:v /* a k-ary predicate */
+	{:
+		if (predicate == null) {
+			predicate = Vocabulary.getPredicateByName(predicateName);
+			if (predicate == null || predicate.arity() != nl.size())
+				parser.report_fatal_error("Predicate " + predicateName + 
+				" was used but not declared as a " + nl.size() + "-ary predicate", null);
+		}
+		List nodeList = new ArrayList();
+		String nodeName;
+		for(ListIterator li = nl.listIterator(); li.hasNext();) {
+			nodeName = (String)li.next();
+			Node currNode = (Node) nodes.get(nodeName);
+			if (currNode != null) {
+				nodeList.add(currNode);
+			} 
+			else {
+				parser.report_fatal_error("Node " + nodeName + " was not declared.", null); 
+			}
+		}
+		NodeTuple nodeTuple = NodeTuple.createTuple(nodeList);
+		structure.update(predicate,nodeTuple,v);
+	:}
+         ;
+
+value    ::= /* A default true value */
+	{: RESULT = Kleene.trueKleene; :}
+         | COLON val:v
+	{: RESULT = v; :}
+         ;
+
+val      ::= TRUE
+	{: RESULT = Kleene.trueKleene; :}
+         | FALSE
+	{: RESULT = Kleene.falseKleene; :}
+         | UNKNOWN
+	{: RESULT = Kleene.unknownKleene; :}
+         ;
+
+messages ::= /* empty */
+	{: RESULT = new ArrayList(); :}
+	| messages:list message:msg
+	{: RESULT = list; RESULT.add(msg); :}
+	;
+
+message	 ::= MESSAGE STRING:str
+         {: RESULT = str; :}
+         ;

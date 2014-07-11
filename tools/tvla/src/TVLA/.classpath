@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build" path="src"/>
+	<classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+	<classpathentry kind="con" path="/afs/cs.wisc.edu/u/j/b/jbreck/research/2013/tvla3-eqn-sys-hybrid1/src/TVLA/lib/cprep.jar"/>
+	<classpathentry kind="con" path="/afs/cs.wisc.edu/u/j/b/jbreck/research/2013/tvla3-eqn-sys-hybrid1/src/TVLA/lib/java_cup.jar"/>
+	<classpathentry kind="con" path="/afs/cs.wisc.edu/u/j/b/jbreck/research/2013/tvla3-eqn-sys-hybrid1/src/TVLA/lib/trove.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

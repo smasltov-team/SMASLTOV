@@ -1,0 +1,667 @@
+// @author Tal Lev-Ami
+// @since tvla-2-alpha September 28, 2002. CFG nodes can either be TVLA identifiers or
+// quoted strings (Roman).
+package tvla.language.TVP;
+
+import tvla.logic.*;
+import tvla.core.*;
+import tvla.formulae.*;
+import tvla.jeannet.language.*;
+import tvla.predicates.*;
+import tvla.jeannet.equationSystem.*;
+import tvla.jeannet.expressions.*;
+import tvla.util.*;
+import com.ibm.dk.dps.io.CPreProcessorStream;
+import java.io.*;
+import java.util.*;
+
+action code {:
+	/* Used for rules related to transform_primitive_expression */
+	FormulaAST precondFormula;
+	FormulaAST haltFormula;
+	List messages;
+	FormulaAST newFormula;
+	FormulaAST cloneFormula;
+	List updates;
+	FormulaAST retainFormula;
+:}
+
+
+parser code {:
+    static TVPLex scanner;
+    static String entry;
+    static CPreProcessorStream stream;
+
+    public void report_error(String message, Object info) {
+		Logger.println(message + " in line " + stream.getLine(scanner.line_count) + 
+				" of file " + stream.getFile(scanner.line_count));
+    }
+
+    public static String configure(String filename, String path) 
+					throws Exception {
+		String infileName = filename;
+		if (!infileName.endsWith(".tvp"))
+			infileName = infileName + ".tvp";
+		stream = new CPreProcessorStream(infileName);
+		AddMacrosToPreProcessor.add(stream);
+
+		stream.setSearchPath(path);
+		scanner = new TVPLex(new InputStreamReader(stream));
+		new parser(scanner).parse();
+	
+		// do cleanups
+		scanner = null;
+		stream = null;
+	
+		return entry;
+    }
+:}
+
+terminal String STRING, ID;
+terminal IMPLIES_T, PRED, INS_PRED, CONSISTENCY_RULE,
+    EXISTS, FORALL, TC, IFF, IMPLIES, OR, AND, NOT, STAR, PLUS,
+    EQ, NEQ, TRUE, FALSE, UNKNOWN, LP, RP, ASSIGN, COMMA, LCBR, RCBR, QMARK, COLON, SEMICOLON,
+    PERCENT, FOREACH, SET, MINUS, LBR, RBR, TITLE, COMBINE, AUTO;
+
+terminal FUNCTION, FOCUS, 
+    PRECOND_COLON, HALT_COLON, MESSAGE_COLON, NEW_COLON, CLONE_COLON, RETAIN_COLON, UPDATE_COLON, TRANSFORM,
+    BLUR, EMBEDBLUR, JOIN, MEETWITH, MEETFOREACH, JOINFOREACH, JOINWITH, DIFF_OVER, DIFF_UNDER, PREFAB, COERCE, LET, IN, BEGIN, END, COPY;
+terminal ARROW;
+
+non terminal tvp, to_print;
+non terminal Symbol symbol;
+non terminal List symbol_list, symbol_list2;
+non terminal Var var;
+non terminal MessageAST message;
+non terminal Kleene kleene;
+non terminal SetAST set_expr;
+non terminal SetDefAST set_def;
+
+non terminal ForeachAST decl_foreach;
+non terminal decls_done;
+non terminal List decls;
+non terminal AST decl;
+
+non terminal Set show_attr_list, optional_show_attr_list, show_attr;
+non terminal List optional_params;
+non terminal CorePredicateAST core_pred_def;
+non terminal InstrumPredicateAST instrum_pred_def;
+non terminal ConstraintAST cons_rule;
+non terminal PredicateAST predicate;
+non terminal PredicatePropertiesAST optional_dependency;
+
+non terminal ExpressionAST expression;
+non terminal List expression_list;
+non terminal ExpressionAST primitive_expression;
+non terminal Integer unary_primitive_name;
+non terminal Integer binary_primitive_name;
+non terminal TransformPrimitiveExpressionAST transform_primitive_expression;
+non terminal optional_precond, optional_halt, optional_message, optional_new, optional_clone, optional_updates, optional_retain;
+non terminal next_transform_primitive, next_precond, next_halt, next_message, next_new, next_clone, next_updates;
+non terminal ReportMessageAST report_message;
+
+non terminal ForeachAST asgn_foreach;
+non terminal List asgns;
+non terminal UpdateAST asgn;
+non terminal Boolean optional_auto;
+
+non terminal List focus_formulae;
+non terminal ForeachAST focus_foreach;
+
+non terminal List macros;
+non terminal FunctionMacroAST macro;
+non terminal FunctionDefAST macro_def;
+non terminal MessageAST title;
+
+non terminal EquationAST equation;
+non terminal List equations;
+non terminal equation_system;
+
+non terminal String binary_op;
+non terminal CombineAST combine;
+non terminal FormulaAST formula;
+
+non terminal List optional_id_list, id_list;
+
+
+// added by Jason Breck in 2014-jan
+non terminal List new_predicate_list; 
+
+
+precedence right EXISTS;
+precedence right FORALL;
+precedence right TC;
+precedence left IFF;
+precedence left IMPLIES;
+precedence left OR;
+precedence left AND;
+precedence right NOT;
+precedence left STAR;
+precedence left PLUS, MINUS;
+
+start with tvp;
+
+tvp	::=	decls_done PERCENT PERCENT macros PERCENT PERCENT equation_system to_print
+	;
+
+/***********************************************************/
+/*********************** General ***************************/
+/***********************************************************/
+
+symbol             ::=     ID:id
+                        {: RESULT = Symbol.ofString(id); :}
+                ;
+
+symbol_list	::=     symbol:id
+                        {: RESULT = new ArrayList(); RESULT.add(id); :}
+		|	symbol_list:list COMMA symbol:id
+			{: RESULT=list; list.add(id); :}
+                ;
+symbol_list2	::=     symbol:id
+                        {: RESULT = new ArrayList(); RESULT.add(id); :}
+		|	symbol_list2:list symbol:id
+			{: RESULT=list; list.add(id); :}
+                ;
+
+var		::=	ID:id
+			{: RESULT = new Var(id); :}
+		;
+message ::=	        STRING:str
+                        {:RESULT = new MessageStringAST(str); :}
+                        | predicate:p
+                        {:RESULT = new MessagePredicateAST(p); :}
+                        | message:l PLUS message:r
+                        {:RESULT = new MessageCompositeAST(l, r); :}
+                        ;
+
+kleene ::=	TRUE
+		{: RESULT = Kleene.trueKleene; :}
+	|	FALSE
+                {: RESULT = Kleene.falseKleene; :}
+	|	UNKNOWN
+                {: RESULT = Kleene.unknownKleene; :}
+	;
+
+/********************************************/
+/******************* Sets *******************/
+/********************************************/
+
+set_def ::= SET ID:name set_expr:elements
+                {: RESULT = new SetDefAST(name, new ArrayList(elements.getMembers())) ; :} 
+        ;
+
+set_expr ::=    ID:set
+                {: RESULT = new SetUseAST(set); :}
+	|       LCBR optional_id_list:list RCBR
+		{: RESULT = new SetConstantAST(list); :}
+        |	set_expr:e1 PLUS set_expr:e2
+                {: RESULT = new SetPlusAST(e1, e2); :}
+        |	set_expr:e1 MINUS set_expr:e2
+                {: RESULT = new SetMinusAST(e1, e2); :}
+        |     set_expr:e1 AND set_expr:e2
+                {: RESULT = new SetAndAST(e1, e2); :}
+        |     LP set_expr:e1 RP
+                {: RESULT = e1; :}
+	;
+
+/***********************************************************/
+/*********************** Declarations **********************/
+/***********************************************************/
+   
+decl_foreach ::= FOREACH LP ID:id IN set_expr:e RP LCBR decls:a RCBR
+                {: RESULT = new ForeachAST(id, e, a); :}
+	;
+
+decls_done  ::= decls:list
+                {: 
+		 for (Iterator i = list.iterator(); i.hasNext(); ) {
+		     AST ast = (AST) i.next();
+		     if (ast instanceof ForeachAST) {
+			ForeachAST foreach = (ForeachAST) ast;
+			for (Iterator j = foreach.evaluate().iterator(); j.hasNext(); ) {
+			   AST generatedAst = (AST) j.next();
+			   generatedAst.generate();
+			}
+		     } else {
+			ast.generate();
+		     }
+		 }
+		 :}
+	;
+
+decls	::=	/* empty */
+                {: RESULT = new ArrayList(); :}
+        |	decls:list decl:single
+                {: RESULT = list; RESULT.add(single); :}
+        |	decls:list decl_foreach:f
+                {: RESULT = list; RESULT.add(f); :}
+	;
+
+decl	::=	core_pred_def:def
+                {: RESULT = def; :}
+		|	instrum_pred_def:def
+                {: RESULT = def; :}
+        |	set_def:def
+                {: RESULT = def; :}
+        |	cons_rule:cons
+                {: RESULT = cons; :}
+	;
+
+show_attr_list ::= kleene:a
+		{: RESULT = new HashSet(); RESULT.add(a); :}
+		| show_attr_list:list COMMA kleene:a
+		{: RESULT = list; RESULT.add(a); :}
+	;
+
+optional_show_attr_list ::= /* empty */ 
+		{: RESULT = new HashSet(); :}
+		| show_attr_list:l 
+		{: RESULT = l; :}
+	;
+
+show_attr ::= /* empty */
+		{: RESULT = null; :}
+	|	LCBR optional_show_attr_list:attr RCBR
+		{: RESULT = attr; :}
+	;
+
+optional_params ::= /* empty */
+		{: RESULT = new ArrayList(); :}
+		| LBR id_list:params RBR 
+		{: RESULT = params; :}
+	;
+
+core_pred_def	::=	PRED ID:p optional_params:params LP optional_id_list:args RP optional_dependency:od  
+			show_attr:attr
+                {:
+				RESULT = new CorePredicateAST(p, params, args, args.size(), od, attr);
+				:}
+		;
+
+instrum_pred_def ::=	INS_PRED ID:p optional_params:params LP optional_id_list:args RP 
+				ASSIGN formula:f optional_dependency:od show_attr:attr
+                {: 
+				RESULT = new InstrumPredicateAST(p, params, 
+								 VarAST.asVariables(args), 
+								 f, od, attr);
+				:}
+		;
+
+cons_rule	::=	CONSISTENCY_RULE formula:body IMPLIES_T formula:head
+                  {: RESULT = new ConstraintAST(body, head); :}
+		;
+
+predicate    ::=   ID:id optional_params:params
+                  {: RESULT = PredicateAST.getPredicateAST(id, params); :}
+		  ;
+
+optional_dependency ::= /* empty */
+			{:
+				RESULT = new PredicatePropertiesAST();
+			:}
+		| optional_dependency:od ID:id
+			{: 
+				RESULT = od;
+				RESULT.addProperty(id); 
+			:}
+        | optional_dependency:od LBR optional_id_list:lhs RBR ARROW ID:rhs
+			{: 
+				RESULT = od;
+				RESULT.addFunctionalDependency(lhs,rhs);
+			:}
+		 ;
+
+/********************************************/
+/***************** Expressions **************/
+/********************************************/
+
+expression	::=	LET symbol:id ASSIGN expression:e1 IN expression:e2
+			{: RESULT = new LetExpressionAST(id,e1,e2); :}
+/*		|	LET symbol:id ASSIGN expression:e1 IN expression_list:el
+			{: RESULT = new LetExpressionAST(id,e1,new SeqExpressionAST(el)); :}
+*/
+		|	BEGIN expression_list:el END
+			{: RESULT = new SeqExpressionAST(el); :}
+		|	primitive_expression:e
+			{: RESULT = e; :}
+		|	symbol:id
+			{: RESULT = new VarExpressionAST(id); :}
+        |   MEETFOREACH symbol:iter IN symbol:inputSet expression:e
+            {: RESULT = new ForEachStructureExpressionAST(ForEachStructureExpressionAST.MEET, inputSet, iter, e); :}
+        |   JOINFOREACH symbol:iter IN symbol:inputSet expression:e
+            {: RESULT = new ForEachStructureExpressionAST(ForEachStructureExpressionAST.JOIN, inputSet, iter, e); :}
+		;
+
+expression_list		::=	expression:e
+				{: RESULT = new ArrayList(); RESULT.add(e); :}
+			|	expression_list:el SEMICOLON expression:e
+				{: el.add(e); RESULT = el; :}
+			;
+
+new_predicate_list ::= predicate:pred
+                       {:  RESULT = new ArrayList(); RESULT.add(pred); :}
+                   |   new_predicate_list:list COMMA predicate:pred
+                       {:  RESULT = list; RESULT.add(pred); :}
+                       ; /* new_predicate_list was added by Jason Breck in 2014-jan */
+
+primitive_expression	::=	unary_primitive_name:idname LP symbol:id RP
+				{: RESULT = new UnaryPrimitiveExpressionAST(idname.intValue(),id); :}	
+			|	binary_primitive_name:idname LP symbol:id1 COMMA symbol:id2 RP
+				{: RESULT = new BinaryPrimitiveExpressionAST(idname.intValue(),id1,id2); :}
+			|	FOCUS LP symbol:id COMMA LCBR focus_formulae:f RCBR RP
+				{: RESULT = new FocusPrimitiveExpressionAST(id, f); :}
+		    |   PREFAB LP symbol:id COMMA STRING:prefabType COMMA STRING:overUnder COMMA kleene:truth COMMA new_predicate_list:args RP
+		        {: RESULT = new PrefabExpressionAST(id, prefabType, overUnder, truth, args); :}
+			|	transform_primitive_expression:e
+				{: RESULT = e; :}
+			;
+unary_primitive_name	::=	COPY
+				{: RESULT = new Integer(UnaryPrimitiveExpression.COPY); :}
+			|	BLUR
+				{: RESULT = new Integer(UnaryPrimitiveExpression.BLUR); :}
+			|	JOIN
+				{: RESULT = new Integer(UnaryPrimitiveExpression.JOIN); :}
+			|	EMBEDBLUR
+				{: RESULT = new Integer(UnaryPrimitiveExpression.EMBEDBLUR); :}
+			|	COERCE
+				{: RESULT = new Integer(UnaryPrimitiveExpression.COERCE); :}
+			;
+binary_primitive_name	::=	MEETWITH
+                            {: RESULT = new Integer(BinaryPrimitiveExpression.MEETWITH); :}
+		                |   JOINWITH
+                            {: RESULT = new Integer(BinaryPrimitiveExpression.JOINWITH); :}
+		                |   DIFF_OVER
+                            {: RESULT = new Integer(BinaryPrimitiveExpression.DIFF_OVER); :}
+		                |   DIFF_UNDER
+                            {: RESULT = new Integer(BinaryPrimitiveExpression.DIFF_UNDER); :}
+			;
+			
+/* Jason Breck added the above joinwith, diff_over, diff_under, prefab, and new_predicate_list in 2014-jan */
+
+/********************************************/
+/********** Update arguments ****************/
+/********************************************/
+/* Parsing of optional arguments is done in a tricky way, because of conflict problems */
+
+
+transform_primitive_expression ::=
+	{:	precondFormula = null;
+	   	haltFormula = null;
+		messages = new ArrayList();
+		newFormula = null;
+		cloneFormula = null;
+		updates = null;
+		retainFormula = null;
+	:}
+	TRANSFORM LP symbol:id next_transform_primitive 
+{: RESULT = new TransformPrimitiveExpressionAST(id,precondFormula,haltFormula,messages,newFormula,cloneFormula,updates,retainFormula); :}
+	;
+next_transform_primitive	::=	COMMA optional_precond
+				{: :}
+			|	RP
+				{: :}
+			;
+
+optional_precond	::=	PRECOND_COLON formula:f next_precond
+				{: precondFormula = f; :}
+			|	optional_halt
+				{: :}
+			;
+next_precond		::=	COMMA optional_halt {: :}
+			|	RP
+			;
+optional_halt		::=	HALT_COLON formula:f next_halt 
+				{: haltFormula = f; :}
+			|	optional_message
+				{:RESULT = null; :}
+			;
+next_halt		::=	COMMA optional_message {: :}
+			|	RP
+			;
+optional_message	::=	MESSAGE_COLON report_message:m next_message
+				{: messages.add(m); :}
+			|	optional_new
+				{: :}
+			;
+next_message		::=	COMMA optional_message
+				{: :}
+			|	RP
+			;
+report_message		::=	formula:f IMPLIES message:m
+				{:RESULT = new ReportMessageAST(f, m); :}
+			;
+
+optional_new		::=	NEW_COLON formula:f next_new
+				{: newFormula = f; :}
+			|	optional_clone
+				{: :}
+			;
+next_new		::=	COMMA optional_clone 
+				{: :}
+			|	RP
+				{: :}
+			;
+optional_clone		::=	CLONE_COLON formula:f next_clone
+				{: cloneFormula = f; :}
+			|	optional_updates
+				{: :}
+			;
+next_clone		::=	COMMA optional_updates
+				{: :}
+			|	RP
+				{: :}
+			;
+optional_updates	::=	UPDATE_COLON LCBR asgns:a RCBR next_updates
+				{: updates = a; :}
+			|	optional_retain
+				{: :}
+			;
+next_updates		::=	COMMA optional_retain
+				{: :}
+			|	RP
+				{: :}
+			;
+optional_retain		::=	RETAIN_COLON formula:f RP
+				{: retainFormula = f; :}
+			|	RP
+				{: :}
+			;
+
+/********************************************/
+/************** Update formulae *************/
+/********************************************/
+
+asgn_foreach ::= FOREACH LP ID:id IN set_expr:e RP LCBR asgns:a RCBR
+                {: RESULT = new ForeachAST(id, e, a); :} 
+	;
+
+asgns	::=	asgn:a
+                {: RESULT = new ArrayList(); RESULT.add(a); :}
+	|	asgn_foreach:a
+                {: RESULT = new ArrayList(); RESULT.add(a); :}
+	|	asgns:prev asgn:a
+                {: RESULT = prev; RESULT.add(a); :}
+	|	asgns:prev asgn_foreach:a
+                {: RESULT = prev; RESULT.add(a); :}
+	;
+
+
+asgn	::=	predicate:p LP optional_id_list:args RP ASSIGN formula:f optional_auto:a
+                {: RESULT = new UpdateAST(p, f, VarAST.asVariables(args), a.booleanValue()); :}
+        /* @since 12.7.2001 
+         * Alex & Mooly added optional parenthesis around predicates to handle
+         * code generated by the macro pre-processor
+         */
+	|  	LP   predicate:p LP optional_id_list:args RP   RP ASSIGN formula:f optional_auto:a
+                {: RESULT = new UpdateAST(p, f, VarAST.asVariables(args), a.booleanValue()); :} 
+	;
+
+optional_auto	::= /* empty */
+		{: RESULT = Boolean.FALSE; :}
+		| AUTO
+		{: RESULT = Boolean.TRUE; :}
+		;
+
+/********************************************/
+/******************* Focus ******************/
+/********************************************/
+
+focus_formulae  ::=     formula:f
+                        {: RESULT = new ArrayList(); RESULT.add(f); :}
+                |       focus_foreach:fe
+                        {: RESULT = new ArrayList(); RESULT.add(fe); :}
+                |       focus_formulae:prev COMMA formula:f
+                        {: RESULT = prev; RESULT.add(f); :}
+                |       focus_formulae:prev COMMA focus_foreach:fe
+                        {: RESULT = prev; RESULT.add(fe); :}
+		;
+
+focus_foreach ::= FOREACH LP ID:id IN set_expr:e RP LCBR focus_formulae:a RCBR
+                  {: RESULT = new ForeachAST(id, e, a); :} 
+              ;
+
+
+/***********************************************************/
+/************************ Macros ***************************/
+/***********************************************************/
+
+/* I do not kno why macros builts a list. It is not used. Bertrand Jeannet */
+
+macros ::= /* empty */
+                {: RESULT = new ArrayList(); :}
+        |	macros:list macro:single
+                {: RESULT = list; RESULT.add(single); :}
+	;
+
+macro ::=       FUNCTION ID:name LBR optional_id_list:args RBR macro_def:def
+                {: RESULT = new FunctionMacroAST(name, args, def); :}
+	;
+
+macro_def	::=	LP symbol_list:symbols RP title:m LCBR expression:e RCBR
+			{: RESULT = new FunctionDefAST(m,symbols,e); :}
+		;
+
+title	        ::=  /* empty */
+                {: RESULT = new MessageStringAST(""); :}
+	|	TITLE message:str 
+                {: RESULT = str; :}
+	;
+
+/*******************************************************/
+/************** Equations ** **************/
+/******************************************/
+
+equation	::=	symbol:node ASSIGN ID:name LBR optional_id_list:args RBR LP symbol_list:nodes RP
+			{: RESULT = new EquationAST(node, FunctionMacroAST.get(name).expand(args), nodes); :}
+		;
+
+equations	::=	equation:eqn
+			{: RESULT = new ArrayList(); RESULT.add(eqn); :}
+		|	equations:list equation:eqn
+			{: RESULT=list; list.add(eqn); :}
+		;
+
+equation_system	::=	equations:list
+	{:
+	EquationGraph.instance = new EquationGraph();
+	for (Iterator i=list.iterator(); i.hasNext(); ){
+		EquationAST eqnAST = (EquationAST)i.next();
+		Equation eqn = eqnAST.getEquation();
+		EquationGraph.instance.addEquation(eqn);
+	}
+	:}
+	;
+
+to_print ::= /* empty */
+		{:
+		EquationGraph.instance.toPrint = new ArrayList(EquationGraph.instance.graph.vertexSet());
+		:}
+		| PERCENT PERCENT symbol_list2:p
+		{:
+		// Check that all symbols have been (implicitely) declared by equations 
+		for (Iterator i = p.iterator(); i.hasNext(); ){
+			Symbol id = (Symbol)i.next();
+			if (! EquationGraph.instance.graph.vertexSet().contains(id)){
+				throw new tvla.exceptions.UserErrorException("TVP file: node " + id + " is specified as to be printed, but it does not appear in any equation");
+			}
+		}
+		EquationGraph.instance.toPrint = p;
+		:}
+	;
+
+/********************************************/
+/************** Combine operator ************/
+/********************************************/
+binary_op ::=	OR
+	{: RESULT = "OrFormula"; :}
+	|	AND
+	{: RESULT = "AndFormula"; :}
+	;
+combine ::=	binary_op:op COMBINE LCBR formula:f COLON ID:id IN
+		set_expr:e RCBR
+	{: RESULT = new CombineAST(op, f, id, e); :}
+	;
+
+/********************************************/
+/************** Logical formulae ************/
+/********************************************/
+formula	::=	FORALL LP optional_id_list:list RP  formula:f
+                {: RESULT = new QuantFormulaAST(VarAST.asVariables(list), f, "AllQuantFormula"); :}
+        |	EXISTS LP optional_id_list:list RP  formula:f
+                {: RESULT = new QuantFormulaAST(VarAST.asVariables(list), f, "ExistQuantFormula"); :}
+	|	combine:comb
+		{: RESULT = comb; :}
+        |	TC LP var:l COMMA var:r RP LP var:sl COMMA var:sr RP formula:f 
+                {: RESULT = new TCFormulaAST(l, r, sl, sr, f); :}
+        |	formula:f1 AND formula:f2
+                {: RESULT = new CompositeFormulaAST(f1, f2, "AndFormula"); :}
+        |	formula:f1 OR formula:f2
+                {: RESULT = new CompositeFormulaAST(f1, f2, "OrFormula"); :}
+        |	formula:f1 IMPLIES formula:f2
+                {: RESULT = new CompositeFormulaAST(f2, new CompositeFormulaAST(f1), "OrFormula"); :}
+	|	formula:f1 IFF formula:f2
+                {: RESULT = new CompositeFormulaAST(f1, f2, "EquivalenceFormula"); :}
+	|	NOT formula:f
+                {: RESULT = new CompositeFormulaAST(f); :}
+        |	LP formula:fc QMARK formula:ft COLON formula:ff RP /* if-then-else */
+                {: RESULT = new IfFormulaAST(fc, ft, ff); :}
+	|	LP formula:f RP
+                {: RESULT = f; :}
+	|	var:l EQ var:r
+                {: RESULT  = new EqualityAST(l, r); :}
+	|	var:l NEQ var:r
+                {: RESULT  = new CompositeFormulaAST(new EqualityAST(l, r)); :}
+	|	predicate:p LP optional_id_list:args RP
+                {: RESULT = new PredicateFormulaAST(p, VarAST.asVariables(args)); :}
+	|	predicate:p STAR LP var:l COMMA var:r RP 
+                {: Var v1 = new Var("__v1"); 
+		   Var v2 = new Var("__v2"); 
+		   RESULT = new CompositeFormulaAST(new EqualityAST(l, r),
+					       new TCFormulaAST(l, r, v1, v2, 
+							     new PredicateFormulaAST(p, v1, v2)),
+					       "OrFormula");
+		:}
+	|	predicate:p PLUS LP var:l COMMA var:r RP 
+                {: Var v1 = new Var("__v1"); 
+		   Var v2 = new Var("__v2"); 
+		   RESULT = new TCFormulaAST(l, r, v1, v2, 
+					     new PredicateFormulaAST(p, v1, v2));
+		:}
+	|	kleene:k
+                {: RESULT = new ValueFormulaAST(k); :}
+        ;
+       
+
+
+/*************************************************/
+id_list ::= ID:id
+        {:  RESULT = new ArrayList(); RESULT.add(id); :}
+        |	id_list:list COMMA ID:id
+        {:  RESULT = list; RESULT.add(id); :}
+        ;
+optional_id_list	::=	/* empty */
+        {: RESULT = new ArrayList(); :}
+        |	id_list:list
+        {: RESULT = list; :}
+	;
+

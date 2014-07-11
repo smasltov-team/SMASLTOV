@@ -1,0 +1,1779 @@
+
+%function OverPointsTo[d,x,y](X)
+  %t "OverPointsTo[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "PointsTo", "over", 1, d, x, y) in
+    begin 
+      focus(Z, { y(v) }); // 
+      //focus(Z, { y(v), x(v1) & y(v2) & n[d](v1,v2) }); // JTB changed this to see if the n edge is possible...
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function DebugOverPointsTo[d,x,y](X)
+  %t "DebugOverPointsTo[" + d + "," + x + "," + y + "]"
+{
+  // JTB: this is a function just designed to help me
+  //   observe and debug the points-to structure; it is
+  //   like OverPointsToLiteral, above, except
+  //   that it doesn't have the focus on y.
+  begin
+    let Z = prefab(X, "PointsTo", "over", 1, d, x, y) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+%function UnderPointsTo[d,x,y](X)
+  %t "UnderPointsTo[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "PointsTo", "under", 1, d, x, y) in
+    begin 
+      focus(Z, { y(v) }); // 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function OverNotPointsTo[d,x,y](X)
+  %t "OverNotPointsTo[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "PointsTo", "over", 0, d, x, y) in
+    begin 
+      // The following lines were commented out in 2014/02 to increase speed
+      //AVT focus(Z, { y(v) }); //AVT
+      //focus(Z, { nxt_contains[y](v) }); //AVT 
+      //coerce(Z);
+      Z
+    end
+  end
+}
+
+%function UnderNotPointsTo[d,x,y](X)
+  %t "UnderNotPointsTo[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "PointsTo", "under", 0, d, x, y) in
+    begin 
+      Z
+    end
+  end
+}
+
+
+// %function BothPointsTo[d,x,y](X)
+// {
+//   begin
+//     let Z = prefab(X, "PointsTo", 1/2, d, x, y) in
+//     begin 
+//       coerce(Z);
+//       Z
+//     end
+//   end
+// }
+
+
+
+%function OverLs[d,x,y](X)
+  %t "OverLs[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Ls", "over", 1, d, x, y) in
+    begin 
+      focus(Z, { y(v)});
+      coerce(Z);
+      Z
+      // The following lines were commented out in 2014/02 to increase speed
+      //////let Y = transform(Z,
+      //////	  update:{
+      ////////t[n](v1, v2) = ((d(v1) & y(v2)) ? 1  : t[n](v1,v2))
+      //////t[d,n](v1, v2) = ((d(v1) & y(v2)) ? 1  : t[d,n](v1,v2))
+      //////}) in begin
+      //////   coerce(Y);
+      //////   blur(Y);
+      //////   Y 
+      //////end
+    end
+  end
+}
+
+
+%function UnderLs[d,x,y](X)
+  %t "UnderLs[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Ls", "under", 1, d, x, y) in
+    begin 
+      Z
+    end
+  end
+}
+
+%function OverNotLs[d,x,y](X)
+  %t "OverNotLs[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Ls", "over", 0, d, x, y) in
+    begin 
+      // The following lines were commented out in 2014/02 to increase speed
+      ///////focus(Z, { y(v) });
+      ///////coerce(Z);
+      Z
+    end
+  end
+}
+
+%function DebugOverLs[d,x,y](X)
+  %t "DebugOverLs[" + d + "," + x + "," + y + "]"
+{
+  // JTB: this is a function just designed to help me
+  //   observe and debug the ls structures; it is
+  //   like OverLsLiteral, above, except
+  //   that it doesn't have the focus on y and the t[d]
+  //   transform.
+  begin
+    let Z = prefab(X, "Ls", "over", 1, d, x, y) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function DebugOverNotLs[d,x,y](X)
+  %t "DebugOverNotLs[" + d + "," + x + "," + y + "]"
+{
+  // JTB: this is a function just designed to help me
+  //   observe and debug the not-ls structures; it is
+  //   like OverNotLsLiteral, above, except
+  //   that it doesn't have the focus on y.
+  begin
+    let Z = prefab(X, "Ls", "over", 0, d, x, y) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+%function UnderNotLs[d,x,y](X)
+  %t "UnderNotLs[" + d + "," + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Ls", "under", 0, d, x, y) in
+    begin 
+      // focus(Z, { y(v) });
+      // coerce(Z);
+      Z
+    end
+  end
+}
+
+
+// %function BothLs[d,x,y](X)
+// {
+//   begin
+//     let Z = prefab(X, "Ls", 1/2, d, x, y) in
+//     begin 
+//       coerce(Z);
+//       Z
+//     end
+//   end
+// }
+
+%function OverEmp[d](X)
+  %t "OverEmp[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "Emp", "over", 1, d) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+
+%function UnderEmp[d](X)
+  %t "UnderEmp[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "Emp", "under", 1, d) in
+    begin 
+      Z
+    end
+  end
+}
+
+
+%function OverNotEmp[d](X)
+  %t "OverNotEmp[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "Emp", "over", 0, d) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+%function UnderNotEmp[d](X)
+  %t "UnderNotEmp[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "Emp", "under", 0, d) in
+    begin 
+      //coerce(Z);
+      Z
+    end
+  end
+}
+
+
+
+// %function BothEmp[d](X)
+// {
+//   begin
+//     let Z = prefab(X, "Emp", 1/2, d) in
+//     begin 
+//       coerce(Z);
+//       Z
+//     end
+//   end
+// }
+
+%function OverTrue[d](X)
+  %t "OverTrue[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "True", "over", 1, d) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function UnderTrue[d](X)
+  %t "UnderTrue[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "True", "under", 1, d) in
+    begin 
+      Z
+    end
+  end
+}
+
+
+%function OverFalse[d](X)
+  %t "OverFalse[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "True", "over", 0, d) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function UnderFalse[d](X)
+  %t "UnderFalse[" + d + "]"
+{
+  begin
+    let Z = prefab(X, "True", "under", 0, d) in
+    begin 
+      Z
+    end
+  end
+}
+
+
+// %function BothTrueFalse[d](X)
+// {
+//   begin
+//     let Z = prefab(X, "True", 1/2, d) in
+//     begin 
+//       coerce(Z);
+//       Z
+//     end
+//   end
+// }
+
+%function OverEq[x,y](X)
+  %t "OverEq[" + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Eq", "over", 1, x, y) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+%function UnderEq[x,y](X)
+  %t "UnderEq[" + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Eq", "under", 1, x, y) in
+    begin 
+      //coerce(Z);
+      Z
+    end
+  end
+}
+
+
+
+%function OverNotEq[x,y](X)
+  %t "OverNotEq[" + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Eq", "over", 0, x, y) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+
+%function UnderNotEq[x,y](X)
+  %t "UnderNotEq[" + x + "," + y + "]"
+{
+  begin
+    let Z = prefab(X, "Eq","under", 0, x, y) in
+    begin 
+      //coerce(Z);
+      Z
+    end
+  end
+}
+
+
+// %function BothEq[d](X)
+// {
+//   begin
+//     let Z = prefab(X, "Eq", 1/2, x, y) in
+//     begin 
+//       coerce(Z);
+//       Z
+//     end
+//   end
+// }
+
+%function StarPartition[d0f,d1f,d2f](X)
+  %t "StarPartition[" + d0f + "," + d1f + "," + d2f + "]"
+{
+  begin
+    let Z = prefab(X, "StarPartition", "over", 1, d0f, d1f, d2f) in
+    begin 
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function MagicWandOverlap[d0f,d1f,d2f](X)
+  %t "MagicWandOverlap[" + d0f + "," + d1f + "," + d2f + "]"
+{
+  begin
+    let Z = prefab(X, "MagicWandOverlap", "over", 1, d0f, d1f, d2f) in
+    begin
+      coerce(Z);
+      Z
+    end
+  end
+}
+
+%function DiffOver[](X,Y)
+  %t "diffOver[]"
+{
+  begin
+  let Z = diff_over(X,Y) in
+    begin
+      Z
+    end
+  end
+}
+
+%function DiffUnder[](X,Y)
+  %t "diffUnder[]"
+{
+  begin
+  let Z = diff_under(X,Y) in
+    begin
+      Z
+    end
+  end
+}
+
+%function MeetPartition[d0f,d1f,d2f](X, TOP)
+  %t "Meet domains " + d0f + " = " + d1f + " . " + d2f
+{
+  begin
+    // d0 = d1 . d2
+    //
+    let Z = prefab(TOP, "StarPartition", "over", 1, d0f, d1f, d2f) in
+    begin
+      meetwith(X,Z);
+      coerce(X);
+      X
+    end
+  end
+}
+
+// X \meet Y \meet Partition
+%function MeetPartitionBoth[d0f,d1f,d2f](X, Y, TOP)
+  %t "Meet domains " + d0f + " = " + d1f + " . " + d2f
+{
+  begin
+    // d0 = d1 . d2
+    //
+    let Z = prefab(TOP, "StarPartition", "over", 1, d0f, d1f, d2f) in
+    begin
+      meetwith(X,Z);
+      meetwith(X,Y);
+      coerce(X);
+      X
+    end
+  end
+}
+
+
+%function MeetOverlap[d0f,d1f,d2f](X, TOP)
+  %t "Domains " + d0f + " and " + d1f + " overlap and are contained in " + d2f
+{
+  begin
+    // d2 = d0 union d1
+    //
+    let Z = prefab(TOP, "MagicWandOverlap", "over", 1, d0f, d1f, d2f) in
+    begin
+      meetwith(X,Z);
+      coerce(X);
+      X
+    end
+  end
+}
+
+
+//////%function MeetPartition[d0f,d1f,d2f](X,Y)
+//////  %t "Meet domains " + d0f + " = " + d1f + " . " + d2f
+//////{
+//////  begin
+//////    // d0 = d1 . d2
+//////    //
+//////    let Z = prefab(X, "StarPartition", 1, d0f, d1f, d2f) in
+//////    begin
+//////      meetwith(X,Y);
+//////      meetwith(X,Z);
+//////      coerce(X);
+//////      X
+//////    end
+//////  end
+//////}
+
+
+%function RenameRegion[d1f,d2f](X)
+  %t "Rename region " + d1f + " to " + d2f
+{
+  begin
+    let Y = transform(X,
+      update:{
+        d2f(v) = d1f(v)
+	singleton[d2f]() = singleton[d1f]()
+        n[d2f](v1,v2) = n[d1f](v1,v2)
+        t[d2f,n](v1,v2) = t[d1f,n](v1,v2)
+        foreach (y in StackVars) {
+          link[d2f,n,y](v) = link[d1f,n,y](v)
+          r[d2f,n,y](v) = r[d1f,n,y](v)
+        }
+        c[d1f,n](v) = 0
+        c[d2f,n](v) = 0
+      }) in begin
+      let Z = transform(Y,
+      update:{
+        d1f(v) = 1/2
+	singleton[d1f]() = 1/2
+        n[d1f](v1,v2) = 1/2
+        t[d1f,n](v1,v2) = 1/2
+        foreach (y in StackVars) {
+          link[d1f,n,y](v) = 1/2
+          r[d1f,n,y](v) = 1/2
+        }
+        c[d1f,n](v) = 0
+        c[d2f,n](v) = 0
+      }) in begin
+      //coerce(Z);
+      //blur(Z);
+      Z 
+      end
+    end
+
+  end
+}
+
+// d1f is a subset of d2f
+%function CopyFrom[d1f,d2f](X)
+  %t "Copy from " + d1f + " to " + d2f
+{
+  begin
+    let Y = transform(X,
+      update:{
+        d2f(v) = (d1f(v) ? 1 : d2f(v))
+        n[d2f](v1,v2) = ( d1f(v1) ? n[d1f](v1,v2) : n[d2f](v1,v2))
+        t[d2f,n](v1,v2) = (t[d1f,n](v1,v2) ? 1 : t[d2f,n](v1,v2))
+        foreach (y in StackVars) {
+          link[d2f,n,y](v) = ((link[d1f,n,y](v)) ? 1 : link[d2f,n,y](v))
+          r[d2f,n,y](v)    = (r[d1f,n,y](v)      ? 1 : r[d2f,n,y](v))
+        }
+        c[d1f,n](v)= 0
+        c[d2f,n](v)= 0
+      }) in begin
+      coerce(Y);
+      Y
+    end
+  end
+}
+
+
+// d2 = d0 . d1
+// This is called after the meet partition.
+// Hence, d0 and d1 and d2 are definite.
+%function UpdateSubRegion[d0f,d1f,d2f](X)
+  %t "Update " +d0f+" assuming " + d2f +" = " + d0f + ". " + d1f
+{
+  begin
+    let Y = transform(X,
+      update:{
+        
+        n[d0f](v1,v2) = ( d0f(v1) ? n[d2f](v1,v2) : n[d0f](v1,v2)) 
+
+        // t[d0f,n](v1,v2) = (v1 == v2) |
+        //                   (d0f(v1) & t[d2f,n](v1,v2) & /* */ a1(v1) & !a1(v2) & d0f(v2) &
+        //                     (A(v) ( !d0f(v) & !a1(v) & !a2(v) & !a3(v) & d2f(v) /*& v != v1 & v != v2*/ & t[d2f,n](v1,v) & t[d2f,n](v,v2) ) -> !d1f(v) )
+        //                   ) 
+        
+        t[d0f,n](v1,v2) = (v1 == v2) |
+                          (d0f(v1) & t[d2f,n](v1,v2) & 
+                            (A(v) ( d2f(v) & v != v1 & v != v2 & t[d2f,n](v1,v) & t[d2f,n](v,v2) ) -> !d1f(v) )
+                          ) 
+        
+        // Newly added, 2014-feb
+        t[d2f,n](v1,v2) = ( t[d2f,n](v1,v2) ? 1 : 
+                              (
+                                 (
+                                   d0f(v1) & d0f(v2) & v1 != v2
+                                   &
+                                   E(v0) d1f(v0) & t[d2f,n](v0,v1) & t[d2f,n](v0,v2)
+                                   &
+                                   ( A(v3,v4) ( ( d1f(v3) & d0f(v4) & t[d1f,n](v0,v3) & n[d1f](v3,v4) ) -> v4 == v1 ) )
+        
+                                   // & ( A(v5) ( t[d2f,n](v1,v5) -> !d1f(v5) ) ) // Would be necessary if we were talking about d0
+                                 )
+                                 ? 1 : t[d2f,n](v1,v2)
+                              )
+                           )
+
+        foreach (y in StackVars) {
+            link[d0f,n,y](v) = d0f(v) & link[d2f,n,y](v) & 
+                                   (   (A(v3) (d1f(v3) & !y(v3)) -> !n[d2f](v,v3))
+                                     | (E(v1) n[d2f](v,v1) & y(v1))
+                                     | (  is_eq[y,null]() & A(v2) !n[d2f](v,v2) ))
+
+            r[d0f,n,y](v3) = ( r[d0f,n,y](v3) ? 1 : 
+                               (
+                                ( E(v2) r[d2f,n,y](v2) & d1f(v2) & t[d2f,n](v2,v3) )
+                                ? 0 : r[d0f,n,y](v3)
+                               )
+                             )
+
+            // r[d0f,n,y](v1) = 
+            //               (d0f(v1) & r[d2f,n,y](v1) &
+            //                 (A(v) (d2f(v) & v != v1 & r[d2f,n,y](v) & t[d2f,n](v,v1) ) -> !d1f(v) )
+            //               ) 
+        }
+        c[d0f,n](v) = 0
+        c[d1f,n](v) = 0
+        c[d2f,n](v) = 0
+      }) in begin
+      coerce(Y);
+      Y
+    end
+  end
+}
+
+
+// d2 = d0 . d1
+// This is called after the meet partition.
+// Hence, d0 and d1 and d2 are definite.
+%function UpdateSubRegionAgain[d0f,d1f,d2f](X)
+  %t "Update " +d0f+" assuming " + d2f +" = " + d0f + ". " + d1f
+{
+  begin
+    let Y = transform(X,
+      update:{
+          t[d0f,n](v1,v2) =  ( ( ( E(v) t[d0f,n](v1,v) & t[d2f,n](v1,v2) & t[d2f,n](v2,v) ) 
+                                 |
+                                 (
+                                   // Newly added, 2014-feb
+                                   //  Idea: if you have two nodes v1, v2 in d0,
+                                   //          and there exists another node v0 in d1
+                                   //          such that v0 transitively reaches both v1 and v2,
+                                   //          and when you start at v0, every "first crossing"
+                                   //          edge from d1 to d0 steps onto v1,
+                                   //          and if v1 cannot reach any node in d1,
+                                   //        then it must be that v1 transitively reaches v2
+                                   //          (as opposed to v2 transitively reaching v1)
+                                   //          because v1 is the "first step out of d1", and
+                                   //          v2 must be later than that first step
+                                   d0f(v1) & d0f(v2) & v1 != v2
+                                   &
+                                   E(v0) d1f(v0) & t[d2f,n](v0,v1) & t[d2f,n](v0,v2)
+                                   &
+                                   ( A(v3,v4) ( ( d1f(v3) & d0f(v4) & t[d1f,n](v0,v3) & n[d1f](v3,v4) ) -> v4 == v1 ) )
+                                   &
+                                   ( A(v5) ( t[d2f,n](v1,v5) -> !d1f(v5) ) ) // This clause is necessary to conclude a t[d0,n] edge.
+                                 )
+                               )
+                               ? 1 
+                               : t[d0f,n](v1,v2) ) 
+
+      }) in begin
+      coerce(Y);
+      Y
+    end
+  end
+}
+
+
+// d2 = d0 union d1
+// This is currently written to use the existence of t[d0f] edges, so it assumes that
+//   a CopyFrom has already taken place.
+//
+%function UpdateUnion[d0f,d1f,d2f](X)
+  %t "Update " +d0f+" assuming " + d0f +" = " + d1f + " union " + d2f
+{
+  begin
+    let Y = transform(X,
+      update:{
+           
+           t[d0f,n](v1,v3) = ( 
+
+                               t[d0f,n](v1,v3) 
+                                   & 
+                                   ( ! (d1f(v1) & !d0f(v3) & E(v2) ( d2f(v2) & t[d0f,n](v1,v2) & !t[d2f,n](v2,v3) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & !d0f(v3) & E(v2) ( d1f(v2) & t[d0f,n](v1,v2) & !t[d1f,n](v2,v3) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d1f(v1) & d1f(v3) & !t[d1f,n](v1,v3) & ( A(v2) d2f(v2) -> (!t[d0f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & d2f(v3) & !t[d2f,n](v1,v3) & ( A(v2) d1f(v2) -> (!t[d0f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d1f(v1) & d2f(v3) & ( A(v2) d2f(v2) -> (!t[d1f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & d1f(v3) & ( A(v2) d1f(v2) -> (!t[d2f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+
+                             )  
+           
+
+           foreach (y in StackVars) {
+
+             link[d0f,n,y](v) = (
+
+                                  link[d0f,n,y](v) 
+
+                                     &
+
+                                     ( ! ( d1f(v) & !link[d1f,n,y](v) & A(v2) ( d2f(v2) -> !n[d0f](v,v2) ) ) )
+
+                                     &
+
+                                     ( ! ( d2f(v) & !link[d2f,n,y](v) & A(v2) ( d1f(v2) -> !n[d0f](v,v2) ) ) )
+
+                                )
+
+           }
+
+      }) in begin
+      coerce(Y);
+      Y
+    end
+  end
+}
+
+%function UpdateUnionAgain[d0f,d1f,d2f](X)
+  %t "Update " +d0f+" assuming " + d0f +" = " + d1f + " union " + d2f
+{
+  begin
+    let Y = transform(X,
+      update:{
+           
+           t[d0f,n](v1,v3) = ( 
+
+                               t[d0f,n](v1,v3) 
+                                   & 
+                                   ( ! (d1f(v1) & !d0f(v3) & E(v2) ( d2f(v2) & t[d0f,n](v1,v2) & !t[d2f,n](v2,v3) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & !d0f(v3) & E(v2) ( d1f(v2) & t[d0f,n](v1,v2) & !t[d1f,n](v2,v3) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d1f(v1) & d1f(v3) & !t[d1f,n](v1,v3) & ( A(v2) d2f(v2) -> (!t[d0f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & d2f(v3) & !t[d2f,n](v1,v3) & ( A(v2) d1f(v2) -> (!t[d0f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d1f(v1) & d2f(v3) & ( A(v2) d2f(v2) -> (!t[d1f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+                                   &
+                                   ( ! (d2f(v1) & d1f(v3) & ( A(v2) d1f(v2) -> (!t[d2f,n](v1,v2) | !t[d0f,n](v2,v3) ) ) ) ) // Original 7:00pm-ish version
+
+                             )  
+           
+
+           foreach (y in StackVars) {
+
+             link[d0f,n,y](v) = (
+
+                                  link[d0f,n,y](v) 
+
+                                     &
+
+                                     ( ! ( d1f(v) & !link[d1f,n,y](v) & A(v2) ( d2f(v2) -> !n[d0f](v,v2) ) ) )
+
+                                     &
+
+                                     ( ! ( d2f(v) & !link[d2f,n,y](v) & A(v2) ( d1f(v2) -> !n[d0f](v,v2) ) ) )
+
+                                )
+
+           }
+
+      }) in begin
+      coerce(Y);
+      Y
+    end
+  end
+}
+
+
+
+
+
+%function HavocPartition[d0f,d1f,d2f](X)
+  %t "Havoc partitions " + d1f + " and " + d2f
+{
+  begin
+    let Y = transform(X,
+      update:{
+        d1f(v) = 1/2
+        d2f(v) = 1/2
+	singleton[d1f]() = 1/2
+	singleton[d2f]() = 1/2
+        n[d1f](v1,v2) = 1/2
+        n[d2f](v1,v2) = 1/2
+        t[d1f,n](v1,v2) = 1/2
+        t[d2f,n](v1,v2) = 1/2
+        foreach (y in StackVars) {
+          link[d1f,n,y](v) = 1/2
+          link[d2f,n,y](v) = 1/2
+          r[d1f,n,y](v) = 1/2
+          r[d2f,n,y](v) = 1/2
+        }
+      }) in begin
+      //coerce(Y);
+      blur(Y);
+      Y 
+    end
+  end
+}
+
+%function HavocN[d0f,d1f,d2f](X)
+  %t "Set abstraction predicates to be 1/2 outside of region " + d0f
+{
+  begin
+
+    let Z = transform(X,
+      update:{
+	// If v1 or v2 are outside d0f, then lower definite n-edge to 1/2. Keep definite false as false,
+	// because projecting out a region cannot lead to "more reachability".
+	n(v1,v2) = ( (heapSort(v1) & heapSort(v2) & ( !d0f(v1) | !d0f(v2) ) & n(v1,v2) ) ? 1/2 : n(v1,v2)  ) 
+    }) in begin
+    Z
+    end
+   end
+}
+
+%function LearnRthru[d0f,d1f,d2f](X)
+  %t "Set abstraction predicates to be 1/2 outside of region " + d0f
+{
+  begin
+   let W = transform(X,
+      update:{
+        foreach (sv in StackVars) {
+           rthru[d0f,n,sv](v) =  ( ( rthru[d2f,n,sv](v) & 
+	                               ( A(v1) (rthru[d2f,n,sv](v1) ) -> !d1f(v1) )  ) 
+	                            ? 1 : (rthru[d0f,n,sv](v)) )
+        }
+    }) in begin
+         W
+    end
+   end
+}
+
+
+
+
+%function ProjectDownToRegion[d0f,d1f,d2f](X)
+  %t "Set abstraction predicates to be 1/2 outside of region " + d0f
+{
+  begin
+    let Y = transform(X,
+      update:{
+      
+        foreach (sv in StackVars - {null}) {
+           //r[d0f,n,sv](v) = (d0f(v) ? r[d0f,n,sv](v) : 1/2)
+           //r[d0f,n,sv](v) = ((d0f(v) | !sv(v)) ? r[d0f,n,sv](v) : 1/2) // NEW as of 2014_06_06
+           r[d0f,n,sv](v) = ((d0f(v) | (r[d0f,n,sv](v) & !sv(v))) ? r[d0f,n,sv](v) : 1/2) // NEW as of 2014_06_06
+           sv(v) = (d0f(v) ? sv(v) : 1/2)
+        }
+        d1f(v) = 1/2
+        d2f(v) = 1/2
+	singleton[d1f]() = 1/2
+	singleton[d2f]() = 1/2
+        n[d1f](v1,v2) = 1/2
+        n[d2f](v1,v2) = 1/2
+        t[d1f,n](v1,v2) = 1/2
+        t[d2f,n](v1,v2) = 1/2
+        foreach (y in StackVars) {
+          link[d1f,n,y](v) = 1/2
+          link[d2f,n,y](v) = 1/2
+          r[d1f,n,y](v) = 1/2
+          r[d2f,n,y](v) = 1/2
+        }
+        c[d0f,n](v) = 0
+        c[d1f,n](v) = 0
+        c[d2f,n](v) = 0
+      }) in begin
+      //coerce(Y);
+      blur(Y);
+      //coerce(Y);
+      Y
+    end
+  end
+//end
+}
+
+
+
+%function HavocOutsideWorld[d0f](X)
+  %t "Set abstraction predicates to be 1/2 outside of region " + d0f
+{
+  begin
+    let Y = transform(X,
+      update:{
+         
+        foreach (sv in StackVars - {null}) {
+           sv(v) = (d0f(v) ? sv(v) : 1/2) 
+           // JTB: not sure why we had a second r[n,x] here...
+           //r[d0f,n,sv](v) = (d0f(v) ? r[d0f,n,sv](v) : 1/2) 
+        }
+        foreach (y in StackVars) {
+          foreach (dm in HeapRegions) {
+            link[dm,n,y](v) = (d0f(v) ? link[dm,n,y](v) : 1/2)             
+            r[dm,n,y](v) = (d0f(v) ? r[dm,n,y](v) : 1/2)          
+          }
+        }
+        foreach (dm in HeapRegions - {d0f} ) {	
+            singleton[dm]() = 1/2	
+        }
+       
+        // Old version:
+
+        //////foreach (sv in StackVars - {null}) {
+        //////   sv(v) = (d0f(v) ? sv(v) : 1/2) 
+        //////   r[n,sv](v) = (d0f(v) ? r[n,sv](v) : 1/2) 
+        //////}
+        //////foreach (sv in StackVars) {
+        //////   nxt_contains[sv](v) = (d0f(v) ? nxt_contains[sv](v) : 1/2)
+        //////}
+        //////foreach (y in StackVars) {
+        //////  foreach (dm in HeapRegions) {
+        //////    nlink[dm,y](v) = (d0f(v) ? nlink[dm,y](v) : 1/2)             
+        //////    rthru[dm,n,y](v) = (d0f(v) ? rthru[dm,n,y](v) : 1/2)          
+        //////  }
+        //////}
+        //////foreach (dm in HeapRegions - {d0f} ) {	
+        //////    singleton[dm]() = 1/2	
+        //////}
+      }) in begin
+      blur(Y);
+      Y
+    end
+  end
+}
+
+/*
+
+%action Id() {
+  %t "Identity action"
+  {
+  }
+}
+
+%action AssumeRegionInhabited(d) {
+  %t "Assume region " + d + " is inhabited"
+  %f { d(v) }
+  %p E(v) d(v)
+  {
+  }
+}
+
+%action SetToTrue(p) {
+  %t "Set propositional variable " + p + " to true"
+  {
+    bval(v) = ((boolSort(v) & p(v)) ? 1 : bval(v))
+  }
+}
+
+%action FocusUnary(d) {
+  %t "Focus on " + d
+  %f { d(v) }
+  {
+  }
+}
+*/
+
+/*
+%function SetRegionToBeRelevant[d](X)
+  %t "Set Region " + d + " to be relevant"
+{
+  begin
+    focus(X, { d(v) } );
+    coerce(X);
+    let Y = transform(X,
+      update:{
+        relevant(v) = (d(v) ? 1 : relevant(v))
+      }) in begin
+      coerce(Y);
+      // blur(Y); // ?
+      Y 
+    end
+  end
+}
+*/
+
+/*
+%function HavocRegion[d](X)
+  %t "Set Region " + d + " abstraction predicates to be 1/2"
+{
+  begin
+    focus(X, { d(v) } );
+    coerce(X);
+    let Y = transform(X,
+      update:{
+        relevant(v) = (d(v) ? 1/2 : relevant(v))
+        //n(v1,v2) = (d(v1) & heapSort(v2) ? 1/2 : (d(v2) & heapSort(v1) ? 1/2 : n(v1,v2))) // original
+        n(v1,v2) = (d(v1) & heapSort(v2) & n(v1,v2) ? 1/2 : (d(v2) & heapSort(v1) & n(v1,v2) ? 1/2 : n(v1,v2))) // I believe this works!! 
+        foreach (sv in StackVars) {
+           rlvnt[sv](v) = (d(v) ? 1/2 : rlvnt[sv](v))
+           rlvnt_nxt_contains[sv](v) = (d(v) ? 1/2 : rlvnt_nxt_contains[sv](v))
+           //rlvnt_nxt_can_reach[sv](v) = (d(v) ? 1/2 : rlvnt_nxt_can_reach[sv](v))
+           rlvnt_r[n,sv](v) = (d(v) ? 1/2 : rlvnt_r[n,sv](v))
+        }
+        // NEED TO FIX THESE SOMEHOW:
+        //rlvnt_ntail[d3,a3](v) = (d(v) ? 1/2 : rlvnt_ntail[d3,a3](v))
+        //rlvnt_ntail[d5,a3](v) = (d(v) ? 1/2 : rlvnt_ntail[d5,a3](v))
+        foreach (hr in HeapRegions) {
+           rlvnt_rgn[hr](v) = (d(v) ? 1/2 : rlvnt_rgn[hr](v))
+        }
+        irrelevant(v) = (d(v) ? 1/2 : irrelevant(v))
+      }) in begin
+      Y
+    end
+  end
+}
+*/
+
+
+
+%function BlurDomains[da,db](X)
+  %t "Havoc and blur domain " + da + " and domain " + db
+{
+  begin
+    let Y = transform(X,
+      update:{
+        da(v) = 1/2
+        db(v) = 1/2
+      }) in begin
+      blur(Y);
+      Y 
+    end
+  end
+}
+
+
+%function FocusEquality[sv1,sv2](X) 
+  %t "Focus on equality of " + sv1 + " and " + sv2
+{ 
+  begin
+    focus(X, { is_eq[sv1,sv2]() });
+    coerce(X);
+    X
+  end
+}
+
+%function FocusNullary[d](X) 
+  %t "Focus on " + d
+{ 
+  begin
+    focus(X, { d() });
+    coerce(X);
+    X
+  end
+}
+
+%function FocusNextIs[dm1,dm2](X) 
+  %t "Focus on next of " + dm1 + " is in " + dm2
+{ 
+  begin
+    focus(X, { n[dm1](v1,v2) & dm2(v2), n[dm2](v1,v2) & dm1(v2)   });
+    coerce(X);
+    X
+  end
+}
+
+
+
+%function FocusUnary[d](X) 
+  %t "Focus on " + d
+{ 
+  begin
+    focus(X, { d(v) });
+    coerce(X);
+    X
+  end
+}
+
+/*
+
+%function SetToFalse[p](X)
+  %t "Set propositional variable " + p + " to false"
+{
+  begin
+    let Y = transform(X,
+      update:{
+        bval(v) = ((boolSort(v) & p(v)) ? 0 : bval(v))
+      }) in begin
+      coerce(Y);
+      // blur(Y); // ?
+      Y 
+    end
+  end
+}
+
+%function SetToTrue[p](X)
+  %t "Set propositional variable " + p + " to true"
+{
+  begin
+    let Y = transform(X,
+      update:{
+        bval(v) = ((boolSort(v) & p(v)) ? 1 : bval(v))
+      }) in begin
+      coerce(Y);
+      // blur(Y); // ?
+      Y 
+    end
+  end
+}
+
+*/
+
+%function OneSaturatePointsToLiteral[x,y,d](X) 
+  %t "Focus-coerce w.r.t. [" + x + " |-> " + y + "]"
+{
+  begin
+    //focus(X, { x(v), y(v), d(v), x(v1) & y(v2) & n(v1,v2)   });
+    //focus(X,   { x(v),       d(v), x(v)  & nxt_contains[y](v) });
+    //focus(X,   { x(v), d(v) }); // prior to a change by JTB on 2013_11_20
+    focus(X,   { x(v), d(v), x(v) & nxt_contains[y](v) });
+    coerce(X);
+    X
+  end
+}
+
+%function OneSaturatePointsToNull[x,d](X) 
+  %t "Focus-coerce w.r.t. [" + x + " |-> NULL]"
+{
+  begin
+    focus(X,   { x(v1), d(v1), x(v1) & n(v1,v2) });
+    coerce(X);
+    X
+  end
+}
+
+%function Meet[](X,Y)
+  %t "Meet of two branches" 
+{
+  begin
+    meetwith(X,Y);
+    coerce(X);
+    X
+  end
+}
+
+%function Meet3[](X,Y,Z)
+  %t "Meet of three branches" 
+{
+  begin
+    meetwith(X,Y);
+    meetwith(X,Z);
+    coerce(X);
+    X
+  end
+}
+
+%function Join[](X,Y)
+  %t "Join" 
+{
+  begin
+    joinwith(X,Y);
+    X
+  end
+}
+
+%function Join3[](X,Y,Z)
+  %t "Join3" 
+{
+  begin
+    joinwith(X,Y);
+    joinwith(X,Z);
+    X
+  end
+}
+
+
+
+%function Blur[](X)
+  %t "Blur" 
+{
+  begin
+    blur(X);
+    X
+  end
+}
+
+%function Coerce[](X)
+  %t "Coerce" 
+{
+  begin
+    coerce(X);
+    X
+  end
+}
+
+%function OneSaturateLs[x,y,d](X)
+  %t "Focus-coerce w.r.t. ls(" + x + ", " + y + ")"
+{
+  begin
+    focus(X,   { is_eq[x,y](), d(v) & x(v), d(v) & nlink[d,y](v), d(v) & r[n,x](v), d(v) & !r[n,y](v) } );
+    coerce(X);
+    X
+    // Note: A satisfactory focus formula for the not-ls case hasn't yet been found.
+    //   We would prefer to have a relatively small number of structures that represent
+    //     the cases of not-ls exactly.  It is difficult to get the right combination of
+    //     a lot of definite information without too many structures.  
+    //   This is partly due to the focus bug in which predicates remain at 1/2 after focus.
+    //   However, another contributing issue is that focus sometimes makes more predicates
+    //     definite than are necessary in order to make a conjunction or disjunction definite.
+    //   And another contributing issue is that focus ignores quantifiers, whereas we really
+    //     do care, in the case of not-ls, only whether or not there exists at least one
+    //     node with certain properties.
+    //   Our workaround is to manually specify a set of structures, as part of the TVS input,
+    //     which constitute a good representation of not-ls.
+  end 
+}
+
+/*
+// EXPERIMENTAL VERSION:
+%function OneSaturateLs[x,y,d](X)
+  %t "Focus-coerce w.r.t. ls(" + x + ", " + y + ")"
+{
+  begin
+    focus(X,   { x(v), d(v), y(v) } );
+    coerce(X);
+    join(X);
+    let Y = transform(X, precondition: (E(v) x(v) & d(v)) & (E(v) y(v) & !d(v)) )
+      in begin
+      focus(Y, { (d(v) -> (r[n,x](v) & ntail[d,y](v))) });
+      coerce(Y);
+      blur(Y);
+      join(Y); // problem: Amazingly, (!!) it looks like there's no way to do a binary join
+      join(X)  //            using the operators available inside a function. 
+      X
+    end
+  end 
+}
+*/
+
+%function OneSaturateCartesian[p](X)
+  %t "Focus-coerce w.r.t. value of " + p
+{ 
+  begin
+    focus(X,  { p(v) & bval(v) });
+    coerce(X);
+    X
+  end
+}
+
+
+%function OneSaturateLsNull[x,d](X)
+  %t "Focus-coerce w.r.t. ls(" + x + ",NULL)"
+{
+  begin
+    focus(X, { x(v1), d(v1), x(v1) & t[n](v1,v2) });
+    coerce(X);
+    X
+  end
+}
+
+%function RetainUnaryNegated[d](X) 
+  %t "Delete nodes in " + d
+{
+  begin
+    let Y = transform(X, retain: !d(v) )
+      in begin
+      coerce(Y);
+      Y 
+    end
+  end
+}
+
+%function OneSaturateEmp[d](X)
+  %t "Focus-coerce w.r.t. emp()"
+{ 
+  begin
+    focus(X, { d(v) });
+    X
+  end
+}
+
+%function OneSaturateEq[x,y,d](X)
+  %t "Focus-coerce w.r.t. (" + x + "==" + y + ")"
+{ 
+  begin
+    focus(X, { x(v), y(v), d(v) });
+    X
+  end
+}
+
+////%function MeetNegatedStar[d0f,d1f,d2f](LHS, RHS, TOP) 
+////  %t "MeetNegatedStar on " + d1f + ", " + d2f
+////{
+////  // Assume inputs are of the form:
+////  //   LHS    in d0f
+////  //   RHS    in d0f
+////  //   JOINED in d0f is the concatenation of LHS and RHS structures
+////  //          note that it should have all d1f and d2f information
+////  //          havoced out
+////  begin
+////    joinforeach J in JOINED
+////    begin
+////      meetforeach Y in H
+////      begin
+////        
+////      end
+////    end
+////  end
+////}
+
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order universal quantification.
+// Note:
+//     *always* use this side-by-side with CheckUniversalBinaryFalse
+//     like:
+//        L5 = CheckUniversalBinaryTrue[...](L4)
+//        L5 = CheckUniversalBinaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckUniversalBinaryTrue[d0f,d1f,d2f,p0f,formulaf](X) 
+  %t "CheckUniversalBinaryTrue on " + d1f + ", " + d2f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & bval(v) ) in
+    begin
+      joinforeach K in W 
+      begin
+        // Havoc d1f and d2f and set formula=0
+        // This used to say d0f instead of heapSort:
+        let Z = transform(K, update: {
+          d1f(v) = (d0f(v) ? 1/2 : d1f(v))
+          d2f(v) = (d0f(v) ? 1/2 : d2f(v))
+          formulaf() = 0
+        }) in 
+        begin
+          focus(Z, { d1f(v), d2f(v) });
+          coerce(Z); 
+          meetforeach Y in Z
+          begin
+            // Set formula back to 1
+            let T = transform(Y, update: {
+              formulaf() = 1
+            }) in begin
+              coerce(T); 
+              T
+            end
+          end
+        end
+      end
+    end
+  end
+}
+//
+//
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order universal quantification.
+// Note:
+//     *always* use this side-by-side with CheckUniversalBinaryTrue
+//     like:
+//        L5 = CheckUniversalBinaryTrue[...](L4)
+//        L5 = CheckUniversalBinaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckUniversalBinaryFalse[d0f,d1f,d2f,p0f,formulaf](X) 
+  %t "CheckUniversalBinaryFalse on " + d1f + ", " + d2f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & !bval(v) ) in
+    begin
+      // There actually isn't any action here that's required
+      //   for soundness.
+      focus(W, { d1f(v), d2f(v) });
+      coerce(W);
+      W
+    end
+  end
+}
+
+
+
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order existential quantification.
+// Note:
+//     *always* use this side-by-side with CheckExistentialBinaryTrue
+//     like:
+//        L5 = CheckExistentialBinaryTrue[...](L4)
+//        L5 = CheckExistentialBinaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckExistentialBinaryFalse[d0f,d1f,d2f,p0f,formulaf](X) 
+  %t "CheckExistentialBinaryFalse on " + d1f + ", " + d2f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & !bval(v) ) in
+    begin
+      joinforeach K in W 
+      begin
+        // Havoc d1f and d2f and set formula=0
+        // This used to say d0f instead of heapSort:
+        let Z = transform(K, update: {
+          d1f(v) = (d0f(v) ? 1/2 : d1f(v))
+          d2f(v) = (d0f(v) ? 1/2 : d2f(v))
+          formulaf() = 0
+        }) in 
+        begin
+          focus(Z, { d1f(v), d2f(v) });
+          //coerce(Z); // warning: it's not correct to comment this out
+            // unless you also have a modified meetforeach that does an initial
+            // coerce automatically!
+          meetforeach Y in Z
+          begin
+            // Set formula back to 1
+            let T = transform(Y, update: {
+              formulaf() = 1
+            }) in begin
+              coerce(T); 
+              T
+            end
+          end
+        end
+      end
+    end
+  end
+}
+//
+//
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order existential quantification.
+// Note:
+//     *always* use this side-by-side with CheckExistentialBinaryFalse
+//     like:
+//        L5 = CheckExistentialBinaryTrue[...](L4)
+//        L5 = CheckExistentialBinaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckExistentialBinaryTrue[d0f,d1f,d2f,p0f,formulaf](X) 
+  %t "CheckExistentialBinaryTrue on " + d1f + ", " + d2f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & bval(v) ) in
+    begin
+      // There actually isn't any action here that's required
+      //   for soundness.
+      focus(W, { d1f(v), d2f(v) });
+      coerce(W);
+      W
+    end
+  end
+}
+
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order universal quantification.
+// Note:
+//     *always* use this side-by-side with CheckUniversalUnaryFalse
+//     like:
+//        L5 = CheckUniversalUnaryTrue[...](L4)
+//        L5 = CheckUniversalUnaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckUniversalUnaryTrue[d0f,d1f,p0f,formulaf](X) 
+  %t "CheckUniversalUnaryTrue on " + d1f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & bval(v) ) in
+    begin
+      joinforeach K in W 
+      begin
+        // Havoc d1f and set formula=0
+        // This used to say d0f instead of heapSort:
+        let Z = transform(K, update: {
+          d1f(v) = (d0f(v) ? 1/2 : d1f(v))
+          formulaf() = 0
+        }) in 
+        begin
+          focus(Z, { d1f(v) });
+          coerce(Z); 
+          meetforeach Y in Z
+          begin
+            // Set formula back to 1
+            let T = transform(Y, update: {
+              formulaf() = 1
+            }) in begin
+              coerce(T); 
+              T
+            end
+          end
+        end
+      end
+    end
+  end
+}
+//
+//
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order universal quantification.
+// Note:
+//     *always* use this side-by-side with CheckUniversalUnaryTrue
+//     like:
+//        L5 = CheckUniversalUnaryTrue[...](L4)
+//        L5 = CheckUniversalUnaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckUniversalUnaryFalse[d0f,d1f,p0f,formulaf](X) 
+  %t "CheckUniversalUnaryFalse on " + d1f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & !bval(v) ) in
+    begin
+      // There actually isn't any action here that's required
+      //   for soundness.
+      focus(W, { d1f(v) });
+      coerce(W);
+      W
+    end
+  end
+}
+
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order existential quantification.
+// Note:
+//     *always* use this side-by-side with CheckExistentialUnaryTrue
+//     like:
+//        L5 = CheckExistentialUnaryTrue[...](L4)
+//        L5 = CheckExistentialUnaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckExistentialUnaryFalse[d0f,d1f,p0f,formulaf](X) 
+  %t "CheckExistentialUnaryFalse on " + d1f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & !bval(v) ) in
+    begin
+      joinforeach K in W 
+      begin
+        // Havoc d1f and set formula=0
+        // This used to say d0f instead of heapSort:
+        let Z = transform(K, update: {
+          d1f(v) = (d0f(v) ? 1/2 : d1f(v))
+          formulaf() = 0
+        }) in 
+        begin
+          focus(Z, { d1f(v) });
+          coerce(Z); 
+          meetforeach Y in Z
+          begin
+            // Set formula back to 1
+            let T = transform(Y, update: {
+              formulaf() = 1
+            }) in begin
+              coerce(T); 
+              T
+            end
+          end
+        end
+      end
+    end
+  end
+}
+//
+//
+// Use this function when:
+//     p0 is a subformula node that represents a use of
+//       second-order existential quantification.
+// Note:
+//     *always* use this side-by-side with CheckExistentialUnaryFalse
+//     like:
+//        L5 = CheckExistentialUnaryTrue[...](L4)
+//        L5 = CheckExistentialUnaryFalse[...](L4)
+//     because the resulting computation is only sound when
+//     both branches are used together.
+%function CheckExistentialUnaryTrue[d0f,d1f,p0f,formulaf](X) 
+  %t "CheckExistentialUnaryTrue on " + d1f
+{ 
+  begin
+    let W = transform(X, precondition: E(v) p0f(v) & bval(v) ) in
+    begin
+      // There actually isn't any action here that's required
+      //   for soundness.
+      focus(W, { d1f(v) });
+      coerce(W);
+      W
+    end
+  end
+}
+
+
+// *****************************************************************
+//    Below this line are the original actions created by Tom+Aditya
+
+/*
+%action AssumeUnary(d) {
+  %t "Assume E(v) " + d + "(v)"
+  %p E(v) d(v)
+  {
+  }
+}
+
+%action Blur0(d) {
+  %t "Blur0 " + d
+  {
+    d(v) = (heapSort(v) ? 1/2 : d(v))
+  }
+}
+
+%action Blur(d1f, d2f) {
+  %t "Blur partition " + d1f + ", " + d2f
+  {
+    d1f(v) = (heapSort(v) ? 1/2 : d1f(v))
+    d2f(v) = (heapSort(v) ? 1/2 : d2f(v))
+  }
+}
+
+%action BlurAbstractionOutsideRegion(d) {
+  %t "BlurAbstractionOutsideRegion " + d
+  {
+    foreach (sv in StackVars) {
+           sv(v) = ((heapSort(v) & !d(v)) ? 1/2 : sv(v))
+      r[n,sv](v) = ((heapSort(v) & !d(v)) ? 1/2 : r[n,sv](v))
+    }
+  }
+}
+
+#ifdef REMOVE_GARBAGE
+%action RemoveGarbageOutsideRegion(d) {
+  %t "RemoveGarbageOutsideRegion " + d 
+  {
+  }
+  %retain boolSort(v) | (heapSort(v) & nongarbage[d](v))
+}
+#endif
+
+%action RetainUnary(d) {
+  %t "RetainUnary " + d 
+  {
+  }
+  %retain d(v)
+}
+
+%action SetToFalse(p) {
+  %t "Set propositional variable " + p + " to false"
+  {
+    bval(v) = ((boolSort(v) & p(v)) ? 0 : bval(v))
+  }
+}
+
+%action OneSaturateCartesian(p) {
+  %t "Focus-coerce w.r.t. value of " + p
+  %f { p(v) & bval(v) }
+  {
+  }
+}
+
+%action OneSaturateEquiv(p1,p2) {
+  %t "Focus-coerce w.r.t. (" + p1 + " <-> " + p2 + ")"
+  %f { p1(v1) & p2(v2) & (bval(v1) <-> bval(v2)) }
+  {
+  }
+}
+
+%action OneSaturateEmp(d) {
+  %t "Focus-coerce w.r.t. emp()"
+  %f { d(v) }
+  {
+  }
+}
+
+%action OneSaturateEq(x,y,d) {
+  %t "Focus-coerce w.r.t. (" + x + "==" + y + ")"
+  %f { x(v), y(v), d(v) }
+  {
+  }
+}
+
+%action OneSaturatePointsToNull(x,d) {
+  %t "Focus-coerce w.r.t. [" + x + " |-> NULL]"
+  %f { x(v1), d(v1), x(v1) & n(v1,v2) }
+  {
+  }
+}
+
+%action OneSaturatePointsToLiteral(x,y,d) {
+  %t "Focus-coerce w.r.t. [" + x + " |-> " + y + "]"
+  %f { x(v), y(v), d(v), x(v1) & y(v2) & n(v1,v2) }
+  {
+  }
+}
+
+%action OneSaturateLsNull(x,d) {
+  %t "Focus-coerce w.r.t. ls(" + x + ",NULL)"
+  %f { x(v1), d(v1), x(v1) & t[n](v1,v2) }
+  {
+  }
+}
+
+%action OneSaturateLsNull_spanning(x,d) {
+  %t "Focus-coerce w.r.t. ls_spanning(" + x + ",NULL)"
+  %f { x(v1), d(v1), 
+       x(v1) & t[spanning,n,x](v1,v2),
+       x(v1) & closesCycle[n,x](v3,v1)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning0(x,y,d) {
+  %t "Focus-coerce w.r.t. ls_spanning(" + x + ", " + y + ")"
+  %f { x(v), y(v), d(v),
+       x(v1) & t[spanning,n,x](v1,v2),
+       y(v1) & t[spanning,n,x](v1,v2)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning(x,y,d) {
+  %t "Focus-coerce w.r.t. ls_spanning(" + x + ", " + y + ")"
+  %f { x(v), y(v), d(v),
+       x(v1) & t[spanning,n,x](v1,v2),
+       y(v1) & t[spanning,n,x](v1,v2),
+       cycleCloserSource[n,x](v1) & cycleCloserTarget[n,x](v3) & closesCycle[n,x](v1,v3)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning01(x,d) {
+  %t "Focus-coerce w.r.t. ls_spanning01(" + x + ")"
+  %f { x(v), d(v),
+       cycleCloserSource[n,x](v1) & cycleCloserTarget[n,x](v3) & closesCycle[n,x](v1,v3)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning02(x,d) {
+  %t "Focus-coerce w.r.t. ls_spanning02(" + x + ")"
+  %f { x(v1) & t[spanning,n,x](v1,v2)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning1(x,y,d) {
+  %t "Focus-coerce w.r.t. ls_spanning1(" + x + ", " + y + ")"
+  %f { x(v), y(v), d(v),
+       cycleCloserSource[n,x](v1) & cycleCloserTarget[n,x](v3) & closesCycle[n,x](v1,v3)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs_spanning2(x,y,d) {
+  %t "Focus-coerce w.r.t. ls_spanning2(" + x + ", " + y + ")"
+  %f { x(v1) & t[spanning,n,x](v1,v2),
+       y(v1) & t[spanning,n,x](v1,v2)
+     }
+  {
+  }
+}
+
+%action OneSaturateLs(x,y,d) {
+  %t "Focus-coerce w.r.t. ls(" + x + ", " + y + ")"
+  %f { x(v), y(v), d(v),
+       x(v1) & t[n](v1,v2),
+       y(v1) & t[n](v1,v2)
+     }
+  {
+  }
+}
+
+%action OneSaturateReachable(x) {
+  %t "Focus-coerce w.r.t. r[n," + x + "]"
+  %f { x(v1), x(v1) & r[n,x](v2) }
+  {
+  }
+}
+
+*/
+
+

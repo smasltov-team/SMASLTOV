@@ -1,0 +1,477 @@
+// *********************************************************************
+//               VALSORT, NUMSORT, and HEAPSORT
+
+%p valSort(v1) 
+%p numSort(v1) 
+%p heapSort(v1) 
+
+// Integrity constraint: valSort(v) <-> numSort(v) xor heapSort(v)
+%r valSort(v) & heapSort(v) ==> !numSort(v)
+%r valSort(v) & numSort(v) ==> !heapSort(v)
+%r valSort(v) & !numSort(v) & !heapSort(v) ==> 0
+
+// *********************************************************************
+//               HEAP REGIONS
+
+foreach (dm in HeapRegions) {
+  %p dm(v)
+  %r dm(v) ==> heapSort(v)
+}
+
+// *********************************************************************
+//               N[DM] 
+
+foreach (dm in HeapRegions) {
+  // JTB: Should this be an instrumentation predicate or a core predicate?
+
+  %p n[dm](v1, v2) function
+
+  //%i n[dm](v1, v2) = dm(v1) & n(v1,v2) function
+  
+  // The following rules caused some unwanted behavior:
+  //%r heapSort(v1) &  dm(v1) & heapSort(v2) &  n(v1,v2) ==>  n[dm](v1,v2)
+  //%r heapSort(v1) &           heapSort(v2) & !n(v1,v2) ==> !n[dm](v1,v2)
+
+  %r heapSort(v1) & !dm(v1) & heapSort(v2)               ==> !n[dm](v1,v2)
+ 
+  // n[dm] is a function from heapSort individuals to valSort individuals:
+
+  //   It's a function:
+  %r E(v1) heapSort(v1) & valSort(v2) & valSort(v3) & n[dm](v1,v2) & n[dm](v1,v3) ==> (v2 == v3)
+  %r E(v2) heapSort(v1) & valSort(v2) & valSort(v3) & n[dm](v1,v2) & (v2 != v3)   ==> !n[dm](v1,v3)
+
+  /*
+    // It's from heapSort to valSort, not numSort:
+    // TODO: JTB is commenting these out for now, since we don't use numSort
+    %r E(v1,v2) numSort(v1) & valSort(v2) & n[dm](v1,v2) ==> 0
+    %r          numSort(v1) & valSort(v2)            ==> !n[dm](v1,v2)
+    %r E(v1)    numSort(v1)               & n[dm](v1,v2) ==> !valSort(v2)
+    %r E(v2)                  valSort(v2) & n[dm](v1,v2) ==> !numSort(v1)
+  */
+}
+
+// *********************************************************************
+//               STACK VARIABLES
+
+foreach (sv in StackVars) {
+  %p sv(v) unique /* pointer */ // TODO: change this back to say pointer
+  //%p sv(v) unique pointer
+  
+  // unique
+  %r       valSort(v1) & valSort(v2) & sv(v1) &     sv(v2) ==>  (v1 == v2)
+  %r E(v1) valSort(v1) & valSort(v2) & sv(v1) & (v1 != v2) ==> !sv(v2) 
+  %r sv(v) ==> valSort(v)
+
+}
+
+// *********************************************************************
+//               IS_EQ
+
+foreach(sv1 in StackVars + { null }) {
+  foreach(sv2 in StackVars + { null }) {
+    %p is_eq[sv1,sv2]() 
+    %r is_eq[sv1,sv2]() & sv1(v) ==> sv2(v)
+    %r is_eq[sv1,sv2]() & sv2(v) ==> sv1(v)
+    %r E(v)  sv1(v) & !sv2(v) ==> !is_eq[sv1,sv2]()
+    %r E(v) !sv1(v) &  sv2(v) ==> !is_eq[sv1,sv2]()
+    %r E(v)  sv1(v) &  sv2(v) ==>  is_eq[sv1,sv2]()
+  }
+  // should we make this ordered, so that it's always is_eq[a1,a2] not is_eq[a2,a1]?
+  //   the constraint rules might have to be written carefully, (split into cases)
+  //   and, we'd have to set up the generator to handle that...
+}
+
+
+foreach(sv1 in StackVars) {
+  foreach(sv2 in StackVars) {
+     foreach(sv3 in StackVars) {
+       // Transitivity of is_eq 
+       %r  is_eq[sv1,sv2]() & is_eq[sv2,sv3]() ==>  is_eq[sv1,sv3]()
+       %r  is_eq[sv1,sv2]() & !is_eq[sv1,sv3]() ==>  !is_eq[sv2,sv3]()
+     }
+  }
+}
+
+// The generator currently generates the top structure
+// to have is_eq[sv1,sv1]. Thus, we probably don't need 
+// this rule.
+// foreach(sv1 in StackVars) {
+//    %r 1 ==> is_eq[sv1,sv1]()
+// }
+
+foreach(sv1 in StackVars + { null }) {
+  foreach(sv2 in StackVars + { null }) {
+    // symmetry of is_eq
+    %r  is_eq[sv1,sv2]() ==>  is_eq[sv2,sv1]()
+    %r !is_eq[sv1,sv2]() ==> !is_eq[sv2,sv1]()
+  }
+}
+// *********************************************************************
+//               IS_EQ <--> NULL
+
+foreach(sv1 in StackVars) {
+  %r A(v) (heapSort(v) -> !sv1(v)) ==> is_eq[sv1,null]()
+  %r is_eq[sv1, null]() & heapSort(v) ==> !sv1(v)
+
+  // Note: the above rule, and others, would need to change if we created a
+  //   null individual.
+}
+
+// *********************************************************************
+//               LINK
+
+foreach (y in StackVars) {
+  foreach (dm in HeapRegions) {
+    
+    // link[dm,n,y](v) says that
+    // dm(v) AND
+    // EITHER   (1) v's successor is
+    //                either (1A) in dm
+    //                    or (1B) is y, 
+    //       OR (2) v has no successor and y == null
+
+    %p link[dm,n,y](v) /* pointer */ abs
+
+    // To say, "v has no successor and y == null" we say: (is_eq[y,null]() & A(v2) !n[dm](v,v2))
+
+    %r heapSort(v) &  (dm(v) & (((E(v1) heapSort(v1) & n[dm](v,v1) & (dm(v1) | y(v1))) | (is_eq[y,null]() & A(v2) !n[dm](v,v2))))) ==>  link[dm,n,y](v)
+    %r heapSort(v) & !(dm(v) & (((E(v1) heapSort(v1) & n[dm](v,v1) & (dm(v1) | y(v1))) | (is_eq[y,null]() & A(v2) !n[dm](v,v2))))) ==> !link[dm,n,y](v)    
+
+    // No need for this rule: it concludes nxt_contains, which is gone, from link, which replaces nxt_contains...
+    //%r      heapSort(v) &  link[dm,n,y](v) & !(E(v1) heapSort(v1) & n(v,v1) & dm(v1)) ==> nxt_contains[y](v) 
+
+    %r heapSort(v) & link[dm,n,y](v) ==> dm(v)
+
+    %r E(v) heapSort(v) &  link[dm,n,y](v) & heapSort(v1) & n[dm](v,v1) & !dm(v1)          ==> y(v1)
+    %r E(v) heapSort(v) &  link[dm,n,y](v) & heapSort(v1) & n[dm](v,v1) &           !y(v1) ==> dm(v1)
+    %r      heapSort(v) &  link[dm,n,y](v) & heapSort(v1) &               !dm(v1) & !y(v1) ==> !n[dm](v,v1) 
+
+    %r E(v,v2) heapSort(v) & link[dm,n,y](v) & (A(v2) !n[dm](v,v2))          ==> is_eq[y,null]()
+    %r         heapSort(v) & link[dm,n,y](v) & is_eq[y,null]() & !dm(v2)     ==> !n[dm](v,v2)
+    %r E(v)    heapSort(v) & link[dm,n,y](v) & is_eq[y,null]() & n[dm](v,v2) ==> dm(v2)
+
+    //%r      heapSort(v) &  link[dm,n,y](v) & !nxt_contains[y](v) & heapSort(v1) & !dm(v1) ==> !n[dm](v,v1)
+
+    // TODO: figure out if dm(v) is required in the next few lines:
+    %r E(v) heapSort(v) & dm(v) & !link[dm,n,y](v) & heapSort(v1) & n[dm](v,v1)        ==> !dm(v1)
+    %r E(v) heapSort(v) & dm(v) & !link[dm,n,y](v) & heapSort(v1) & n[dm](v,v1)        ==> !y(v1)
+    %r      heapSort(v) & dm(v) & !link[dm,n,y](v) & heapSort(v1) &             y(v1)  ==> !n[dm](v,v1)
+    %r      heapSort(v) & dm(v) & !link[dm,n,y](v) & heapSort(v1) &             dm(v1) ==> !n[dm](v,v1)
+
+    %r heapSort(v) & !link[dm,n,y](v) & (((E(v1) heapSort(v1) & n[dm](v,v1) & (dm(v1) | y(v1))) | (is_eq[y,null]() & A(v2) !n[dm](v,v2)))) ==>  !dm(v)
+
+    %r !is_eq[y,null]() & heapSort(v1) & link[dm,n,y](v1) & heapSort(v3) & ( A(v4) ( heapSort(v4) & v3 != v4 ) -> !n[dm](v1,v4) ) ==> n[dm](v1,v3) 
+
+    // The rules from here down to the next } used to be stated in terms of nxt_contains,
+    //   but now we have removed the nxt_contains predicate:
+
+    //%r valSort(v) & valSort(v1) &  nxt_contains[sv](v) &  sv(v1) ==>  n(v,v1)
+    //%r valSort(v) & valSort(v1) &  nxt_contains[sv](v) & !sv(v1) ==> !n(v,v1)
+   
+    // %r valSort(v) & valSort(v1) & !nxt_contains[sv](v) &  sv(v1) ==> !n(v,v1)
+    //%r E(v1) valSort(v1) & valSort(v) &  n[dm](v,v1) &  sv(v1)   ==>  nxt_contains[sv](v)
+    //%r E(v1) valSort(v1) & valSort(v) &  n[dm](v,v1) & !sv(v1)   ==> !nxt_contains[sv](v)
+    
+    //%r E(v1) valSort(v1) & valSort(v) & !n(v,v1) &  sv(v1) ==> !nxt_contains[sv](v)
+    //%r E(v)  valSort(v1) & valSort(v) &  n(v,v1) &  nxt_contains[sv](v) ==>  sv(v1)
+    //%r E(v)  valSort(v1) & valSort(v) & !n(v,v1) &  nxt_contains[sv](v) ==> !sv(v1)
+    //%r E(v)  valSort(v1) & valSort(v) &  n(v,v1) & !nxt_contains[sv](v) ==> !sv(v1)
+
+    // XXX:
+    // Explanation: if there is no sv individual, then all heap sort individuals with no
+    //   outgoing n edges satisfy nxt_contains[sv] because sv is considered to be null,
+    //   and individuals v with no outgoing n edges satisfy [ v |-> null ]
+    //%r valSort(v) & (A(v1) valSort(v1) -> !n(v,v1)) & (A(v2) valSort(v2) -> !sv(v2)) ==> nxt_contains[sv](v) 
+
+    //%r !valSort(v) ==> !nxt_contains[sv](v)
+    %r !valSort(v) ==> !link[dm,n,y](v)
+  }
+}
+//foreach (y in StackVars) {
+//  foreach (dm in HeapRegions) {
+//    foreach (dm2 in HeapRegions) {
+//      // HEY AVT LOOK AT THIS
+//      // TODO: decide if we want to remove this and instead use updates to transfer between domains
+//      // Transfer of nlink from one domain to another
+//      %r  link[dm2,n,y](v1) & ( A(v2) n[dm](v1,v2) -> (dm(v2) | !dm2(v2) )  )  ==> link[dm,n,y](v1)     
+//    }
+//  }
+//}
+// *********************************************************************
+//               IS_EQ <--> LINK
+
+foreach (dm in HeapRegions) {
+  foreach(sv1 in StackVars) {
+    foreach(sv2 in StackVars) {
+      // Assuming acyclic lists
+      %r (E(v1) dm(v1)) & (A(v) dm(v) -> (link[dm,n,sv1](v) &  link[dm,n,sv2](v))) ==>  is_eq[sv1,sv2]()
+      %r (E(v) dm(v) &   link[dm,n,sv1](v) & !link[dm,n,sv2](v))  ==> !is_eq[sv1,sv2]()
+      %r  link[dm,n,sv1](v) & is_eq[sv1,sv2]() ==>  link[dm,n,sv2](v)
+      %r !link[dm,n,sv1](v) & is_eq[sv1,sv2]() ==> !link[dm,n,sv2](v)
+    }
+  }
+}
+
+
+// TODO: RESTATE THESE IN TERMS OF NLINK INSTEAD OF NXT_CONTAINS
+
+//foreach(sv1 in StackVars + { null }) {
+//  foreach(sv2 in StackVars + { null }) {
+//    %r  is_eq[sv1,sv2]() &  nxt_contains[sv1](v) ==>  nxt_contains[sv2](v)
+//    %r !is_eq[sv1,sv2]() &  nxt_contains[sv1](v) ==> !nxt_contains[sv2](v)
+//    %r  is_eq[sv1,sv2]() & !nxt_contains[sv1](v) ==> !nxt_contains[sv2](v)
+//    %r E(v)  nxt_contains[sv1](v) & nxt_contains[sv2](v) ==>  is_eq[sv1,sv2]()
+//    %r E(v) !nxt_contains[sv1](v) & nxt_contains[sv2](v) ==> !is_eq[sv1,sv2]()
+//  }
+//}
+
+// *********************************************************************
+//               SINGLETON 
+
+foreach (dm in HeapRegions) {
+  /* If singleton[dm] is true then dm is a heap region that contains exactly one individual */
+  %p singleton[dm]()
+
+  /* There exists at least one, and only one */
+  %r E(v1) heapSort(v1) & dm(v1) & (A(v2) heapSort(v2) -> (dm(v2) -> (v1 == v2))) ==> singleton[dm]()
+
+  /* No individuals v1 and v2 in dm, and dm is singleton, then v1 = v2 */
+  %r heapSort(v1) & dm(v1) & heapSort(v2)  &  dm(v2) & singleton[dm]()  ==> v1 == v2
+
+  // No individual exists in dm, then dm not singleton
+  %r A(v1)    heapSort(v1) -> !dm(v1)                                        ==> !singleton[dm]()
+
+  // Two distinct inviduals in dm, then dm not singleton
+  %r E(v1,v2) heapSort(v1)  &  dm(v1)  & heapSort(v2)  & dm(v2)  & v1 != v2  ==> !singleton[dm]()
+
+    
+  foreach (y in StackVars) {
+    %r singleton[dm]() & link[dm,n,y](v) & y(v2) ==> n[dm](v,v2)
+  }
+
+  
+}
+
+// *********************************************************************
+//               T[DM,N]
+
+/////////////////////////////////////////////
+// Instrumentation (i.e., derived) predicates
+
+// The t[n] predicate records transitive reflexive reachability between
+// list elements along the n field.
+foreach (dm in HeapRegions) {
+  // JTB: Is tthru still reflexive in the same way as t[n]?
+  %i t[dm,n](v1, v2) = heapSort(v1) & valSort(v2) & n[dm]*(v1, v2) transitive reflexive
+
+  %r heapSort(v1) & valSort(v2) &  n[dm]*(v1, v2) ==>  t[dm,n](v1, v2)
+  %r heapSort(v1) & valSort(v2) & !n[dm]*(v1, v2) ==> !t[dm,n](v1, v2)
+
+  /* 
+    // TODO: JTB is commenting these out, for now, because we don't use numSort
+    %r          numSort(v1) & valSort(v2) & t[dm,n](v1,v2)            ==> v1 == v2
+    %r          numSort(v1) & valSort(v2)                      & v1 != v2 ==> !t[dm,n](v1,v2)
+    %r E(v1)    numSort(v1)               & t[dm,n](v1,v2) & v1 != v2 ==> !valSort(v2)
+    %r E(v2)                  valSort(v2) & t[dm,n](v1,v2) & v1 != v2 ==> !numSort(v1)
+  */
+
+  // t[dm,n]
+  %r valSort(v1) & valSort(v2) &    n[dm](v1,v2) ==> t[dm,n](v1,v2)
+  %r valSort(v1) & valSort(v2) & !t[dm,n](v1,v2) ==> !n[dm](v1,v2)
+  // t[dm,n] is reflexive
+  %r valSort(v1) & valSort(v2) &          (v1 == v2) ==> t[dm,n](v1,v2) 
+  %r valSort(v1) & valSort(v2) & !t[dm,n](v1,v2) ==> (v1 != v2)
+  // t[dm,n] is transitive 
+  %r E(v2) valSort(v1) & valSort(v2) & valSort(v3) & t[dm,n](v1,v2) & t[dm,n](v2,v3)                    ==>  t[dm,n](v1,v3) 
+  %r E(v1) valSort(v1) & valSort(v2) & valSort(v3) & t[dm,n](v1,v2)                   & !t[dm,n](v1,v3) ==> !t[dm,n](v2,v3)
+  %r E(v3) valSort(v1) & valSort(v2) & valSort(v3)                  & t[dm,n](v2,v3)  & !t[dm,n](v1,v3) ==> !t[dm,n](v1,v2)
+
+  %r E(v1) valSort(v1) & valSort(v2) & valSort(v3) & t[dm,n](v1,v2) & !t[dm,n](v3,v2) &  t[dm,n](v1,v3) ==>  t[dm,n](v2,v3)
+  //%r E(v3) valSort(v1) & valSort(v2) & valSort(v3) & !t[dm,n](v2,v1) & t[dm,n](v2,v3) & t[dm,n](v1,v3)  ==> t[dm,n](v1,v2)
+
+  #ifndef CYCLIC
+   // n-predicate is acyclic
+   %r heapSort(v1) & valSort(v2) & t[dm,n](v1,v2)  ==> !n[dm](v2,v1)
+   %r heapSort(v1) & valSort(v2) &    n[dm](v2,v1) ==> !t[dm,n](v1,v2)
+  
+   %r heapSort(v1) & heapSort(v2) & t[dm,n](v1,v2) & t[dm,n](v2,v1)              ==> (v1 == v2)
+   %r heapSort(v1) &  valSort(v2) & t[dm,n](v1,v2)                  & (v1 != v2) ==> !t[dm,n](v2,v1)
+   %r  valSort(v1) & heapSort(v2)                  & t[dm,n](v2,v1) & (v1 != v2) ==> !t[dm,n](v1,v2)
+  #endif
+
+}
+
+// *********************************************************************
+//               T[DM,N] <--> LINK
+
+foreach (y in StackVars) {
+  foreach (dm in HeapRegions) {
+    // For all nodes v2, if v2 is not in v1's domain then there definitely no n-edge,    
+    // and there exists a node v3 different from v1 that is reachable from v1,
+    // then you have to stay within dm using n-edge, and hence link[dm,n,y](v1)
+    //
+    %r dm(v1) & ( A(v2) heapSort(v2) -> (!dm(v2) -> !n[dm](v1,v2)) ) & ( E(v3) heapSort(v3) & (v1 != v3) & t[dm,n](v1,v3) ) ==> link[dm,n,y](v1)
+
+    %r heapSort(v1) & dm(v1) & E(v2) ( heapSort(v2) & y(v2) & t[dm,n](v1,v2) & v1 != v2 ) ==> link[dm,n,y](v1)
+
+    // If all individuals in dm are nlink[dm,n,y], then they also all have a transitive edge to y
+    %r heapSort(v) & link[dm,n,y](v) & y(v2) & ( A(v1) dm(v1) -> link[dm,n,y](v1) ) ==> t[dm,n](v,v2)
+
+  }
+}
+// *********************************************************************
+//               C[DM,N]
+
+foreach (dm in HeapRegions) {
+  // c[dm,n] holds for elements in a cycle of n[dm]-edges
+  %i c[dm,n](v) = E(v1) heapSort(v) & heapSort(v1) & n[dm](v,v1) & t[dm,n](v1,v)
+  
+  %r E(v1) heapSort(v) & heapSort(v1) & n[dm](v,v1) & t[dm,n](v1,v)                   ==>  c[dm,n](v)
+  %r       heapSort(v) & heapSort(v1) & n[dm](v,v1)                     & !c[dm,n](v) ==> !t[dm,n](v1,v)
+  %r       heapSort(v) & heapSort(v1)               & t[dm,n](v1,v)     & !c[dm,n](v) ==> !n[dm](v,v1)
+  
+  %r E(v1) heapSort(v2) & heapSort(v1) & t[dm,n](v2,v1) & (v2 != v1) & t[dm,n](v1,v2)                ==>  c[dm,n](v2)
+  %r       heapSort(v2) & heapSort(v1) & t[dm,n](v2,v1) & (v2 != v1)                  & !c[dm,n](v2) ==> !t[dm,n](v1,v2)
+  %r       heapSort(v2) & heapSort(v1) & t[dm,n](v2,v1)              & t[dm,n](v1,v2) & !c[dm,n](v2) ==>  (v2 == v1)
+  %r       heapSort(v2) & heapSort(v1)                  & (v2 != v1) & t[dm,n](v1,v2) & !c[dm,n](v2) ==> !t[dm,n](v2,v1)
+}
+
+// *********************************************************************
+//               R[DM,N,SV]
+
+// For every stack variable sv the predicate r[n,sv] holds for individual
+// v when v is reachable from variable sv along the n field (more formally,
+// the corresponding list element is reachable from sv).
+foreach (dm in HeapRegions) {
+  foreach (sv in StackVars) {
+  
+    %i r[dm,n,sv](v2) = E(v1) valSort(v1) & valSort(v2) & sv(v1) & t[dm,n](v1, v2)
+  
+    %r        valSort(v2) &  valSort(v1) & !r[dm,n,sv](v2) &           sv(v1)                    ==> !t[dm,n](v1, v2)
+    %r E(v2)  valSort(v2) &  valSort(v1) & !r[dm,n,sv](v2)                    &  t[dm,n](v1,v2)  ==> !sv(v1)
+    %r E(v1)  valSort(v2) &  valSort(v1)                   &           sv(v1) &  t[dm,n](v1,v2)  ==>  r[dm,n,sv](v2)
+  
+    %r        valSort(v1) &  valSort(v2) &  r[dm,n,sv](v2) &           sv(v1)                    ==>  t[dm,n](v1, v2)
+    %r E(v2)  valSort(v1) &  valSort(v2) &  r[dm,n,sv](v2)                    & !t[dm,n](v1,v2)  ==> !sv(v1)
+    %r E(v1)  valSort(v1) &  valSort(v2)                   &           sv(v1) & !t[dm,n](v1,v2)  ==> !r[dm,n,sv](v2)
+  
+    %r        valSort(v1) &  valSort(v2) &  r[dm,n,sv](v1) & !r[dm,n,sv](v2)                     ==> !t[dm,n](v1,v2)
+    %r E(v1)  valSort(v1) &  valSort(v2) &  r[dm,n,sv](v1)                    &  t[dm,n](v1,v2)  ==>  r[dm,n,sv](v2)
+    %r E(v2)  valSort(v1) &  valSort(v2)                   & !r[dm,n,sv](v2)  &  t[dm,n](v1,v2)  ==> !r[dm,n,sv](v1)
+  
+    %r         valSort(v)                 & !r[dm,n,sv](v)                                 ==> !sv(v)
+    %r         valSort(v)                                  &           sv(v)               ==> r[dm,n,sv](v)
+    
+    %r valSort(v1) & A(v2) valSort(v2) -> !sv(v2) ==> !r[dm,n,sv](v1)
+
+    %r valSort(v1) & !sv(v1) & (A(v2) (valSort(v2) & dm(v2)) -> !sv(v2)) ==> !r[dm,n,sv](v1)
+  
+  #ifndef CYCLIC
+   %r       valSort(v1) &  valSort(v2) & r[dm,n,sv](v2) & sv(v1) & t[dm,n](v2,v1)              ==> (v1 == v2)
+   %r       valSort(v1) &  valSort(v2) & r[dm,n,sv](v2) & sv(v1)                  & (v1 != v2) ==> !t[dm,n](v2,v1)
+   %r E(v2) valSort(v1) &  valSort(v2) & r[dm,n,sv](v2)          & t[dm,n](v2,v1) & (v1 != v2) ==> !sv(v1)
+   %r E(v1) valSort(v1) &  valSort(v2)                  & sv(v1) & t[dm,n](v2,v1) & (v1 != v2) ==> !r[dm,n,sv](v2)
+  
+   %r       valSort(v1) &  valSort(v2) & r[dm,n,sv](v2) & sv(v1) & n[dm](v2,v1)              ==> (v1 == v2)
+   %r       valSort(v1) &  valSort(v2) & r[dm,n,sv](v2) & sv(v1)                & (v1 != v2) ==> !n[dm](v2,v1)
+   %r E(v2) valSort(v1) &  valSort(v2) & r[dm,n,sv](v2)          & n[dm](v2,v1) & (v1 != v2) ==> !sv(v1)
+   %r E(v1) valSort(v1) &  valSort(v2)                  & sv(v1) & n[dm](v2,v1) & (v1 != v2) ==> !r[dm,n,sv](v2)
+  #endif
+  
+  }
+}
+// *********************************************************************
+//               IS_EQ <--> R[DM,N,SV]
+
+foreach (dm in HeapRegions) {
+  foreach(sv1 in StackVars) {
+    foreach(sv2 in StackVars) {
+      %r is_eq[sv1,sv2]() &  r[dm,n,sv1](v) ==>  r[dm,n,sv2](v)
+      %r is_eq[sv1,sv2]() & !r[dm,n,sv1](v) ==> !r[dm,n,sv2](v)
+      %r E(v) r[dm,n,sv1](v) & !r[dm,n,sv2](v) ==> !is_eq[sv1,sv2]()
+    }
+  }
+}
+
+// *********************************************************************
+//               OTHER T[HR,N] RULES
+
+foreach (dm in HeapRegions) {
+
+  // Integrity constraints for transitive reachability
+  %r E(v1) valSort(v1) & valSort(v2) & valSort(v3) & t[dm,n](v1, v2) & t[dm,n](v1, v3) & !t[dm,n](v2, v3) ==> t[dm,n](v3, v2)
+  
+  // Conditions under which a t[dm,n]-tuple implies an n-tuple
+  %r valSort(v1) & valSort(v2) & t[dm,n](v1,v2) & (v1 != v2) & !c[dm,n](v1) & !c[dm,n](v2) & (A(v) valSort(v) -> ((t[dm,n](v1,v) & (v != v1)) -> t[dm,n](v2,v))) ==> n[dm](v1,v2)
+  
+  // Conditions that imply the absence of an n-tuple
+  %r valSort(v1) &  valSort(v3) & t[dm,n](v1,v3) & (v1 != v3) & !c[dm,n](v1) & !c[dm,n](v3) & (E(v2) valSort(v2) & (v1 != v2) & (v2 != v3) & t[dm,n](v1,v2) & t[dm,n](v2,v3)) ==> !n[dm](v1,v3)
+  
+  //%r valSort(v1) & valSort(v2) & t[dm,n](v1,v2) & (v1 != v2) & !c[dm,n](v1) & !c[dm,n](v2) & (A(v) valSort(v) -> (t[dm,n](v,v1) | t[dm,n](v2,v))) ==> n[dm](v1,v2)
+  
+  
+  // Newly added, 2014-Jan
+  %r E(v1) valSort(v1) & valSort(v2) & valSort(v3) & n[dm](v1,v2) & t[dm,n](v1,v3) & (v1 != v3) ==> t[dm,n](v2,v3)
+  
+  // If v1 can reach v2, but v3 can't reach v2, then v1's successor cannot be v3
+  %r E(v2) valSort(v1) & valSort(v2) & valSort(v3) & (v1 != v3) & (v1 != v2) & (v2 != v3) & t[dm,n](v1,v2) & !t[dm,n](v3,v2) ==> !n[dm](v1,v3)
+
+}
+
+
+/*
+// This was our first attempt at making an rthru predicate.  
+// It is probably safe to delete.
+//AVT 
+  foreach (z in StackVars) {
+    foreach (dm in HeapRegions) {
+      // Unary predicate true on an individual if it is reachable via zero or more n-edges from variable z
+      //   while only staying in heap region dm
+      //   //reword above description
+  
+      %p rthru[dm,n,z](v)
+  
+      %r heapSort(v1) -> rthru[dm,n,z](v1)  ==> r[n,z](v1)
+      %r heapSort(v1) -> !r[n,z](v1)        ==> !rthru[dm,n,z](v1)
+      
+      %r heapSort(v1) -> (z(v1) &  dm(v1))  ==> rthru[dm,n,z](v1)
+      %r heapSort(v1)  &  (A(v2)  heapSort(v2)->!dm(v2))   ==> !rthru[dm,n,z](v1)
+      %r heapSort(v1)  &  is_eq[z,null]()   ==> !rthru[dm,n,z](v1)
+      %r heapSort(v1)  & (A(v2) heapSort(v2) -> !( dm(v2) & z(v2))) ==> !rthru[dm,n,z](v1)
+  
+      %r E(v1) heapSort(v2) & heapSort(v1) & rthru[dm,n,z](v1) & n(v1,v2) & dm(v2) ==> rthru[dm,n,z](v2)
+      // TODO AVT INCOMPLETE 
+  
+      // %r A(v1) heapSort(v1) -> ( !z(v2) -> n(v1,v2) -> !rthru[dm,n,z](v1) )    ==> ! rthru[dm,n,z](v2)
+  
+    }
+  
+  }
+*/
+
+// OLD rules for NLink
+/*
+  // Here we define NLink, if we have chosen to have *all* nlinks defined
+  foreach (y in StackVars) {
+    foreach (dm in HeapRegions) {
+  
+        // For all nodes v2, if v2 is not in v1's domain then there definitely no n-edge    
+        //   and there exists a node v3 different from v1 that is reachable from v1,
+        //   then you have to stay within dm using n-edge, and hence nlink[dm,y](v1)   
+        %r (A(v2) heapSort(v2) -> (!dm(v2) -> !n(v1,v2))) & ( E(v3) heapSort(v3) & (v1 != v3) & t[n](v1,v3)  ) ==> nlink[dm,y](v1)
+  
+        %r      heapSort(v) &                   ((E(v1) heapSort(v1) & n(v,v1) & dm(v1)) | nxt_contains[y](v)) ==>  nlink[dm,y](v)
+        %r      heapSort(v) &                  !((E(v1) heapSort(v1) & n(v,v1) & dm(v1)) | nxt_contains[y](v)) ==> !nlink[dm,y](v)
+        %r      heapSort(v) &  nlink[dm,y](v) & !(E(v1) heapSort(v1) & n(v,v1) & dm(v1)) ==> nxt_contains[y](v) 
+        %r E(v) heapSort(v) &  nlink[dm,y](v) & !nxt_contains[y](v) & heapSort(v1) & n(v,v1) ==> dm(v1)
+        %r      heapSort(v) &  nlink[dm,y](v) & !nxt_contains[y](v) & heapSort(v1) & !dm(v1) ==> !n(v,v1)
+        %r      heapSort(v) &  nlink[dm,y](v) & !y(v1)              & heapSort(v1) & !dm(v1) ==> !n(v,v1)  
+  
+  
+        %r      heapSort(v) & !nlink[dm,y](v) &                       heapSort(v1) &  dm(v1) ==> !n(v,v1)
+        %r E(v) heapSort(v) & !nlink[dm,y](v) & heapSort(v1) & n(v,v1) ==> !dm(v1)
+        %r      heapSort(v) & !nlink[dm,y](v) ==> !nxt_contains[y](v)
+    }
+  }
+*/
+

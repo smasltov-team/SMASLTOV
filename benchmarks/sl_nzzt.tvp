@@ -1,0 +1,177 @@
+// #include "equiv.tvp"
+
+// Jason is adding this rule, which was previously used in each individual
+//   TVP example file, directly to sl_nzzt, since it seems to be a rule
+//   that we always want.  It causes us to only consider structures in
+//   which there is a heapSort summary node that is not in any domain.
+%r A(v) heapSort(v) -> !(sm(v) & (&/{!hr(v) : hr in HeapRegions})) ==> 0 
+
+// A bridge between facts about boolSort individuals and facts about
+//   heapSort individuals.  We may make this bridge true, so that constraints 
+//   about the one affect the other, or make it 1/2, so that facts about
+//   the one do not affect the other.
+//%p formula() 
+
+#define DecomposeHeap(h1, h2, h3) \
+ %r heapSort(v) & h2(v) ==> h1(v) \
+ %r heapSort(v) & !h1(v) ==> !h2(v) \
+ %r heapSort(v) & h3(v) ==> h1(v) \
+ %r heapSort(v) & !h1(v) ==> !h3(v) \
+ %r heapSort(v) & ((h2(v) & !h3(v)) | (!h2(v) & h3(v))) ==> h1(v) \
+ %r heapSort(v) & !h2(v) & !h3(v) ==> !h1(v) \
+ %r heapSort(v) & h1(v) & h2(v) ==> !h3(v) \
+ %r heapSort(v) & h1(v) & !h2(v) ==> h3(v) \
+ %r heapSort(v) & h1(v) & h3(v) ==> !h2(v) \
+ %r heapSort(v) & h1(v) & !h3(v) ==> h2(v)
+ // Instead of the last four lines, we would
+ // like to say %r h1(v) ==> h2(v) <-> !h3(v)
+
+#define KeepHeapStructureTernary(h1, h2, h3, h4) \
+  %r heapSort(v) &  h1(v) ==>  h2(v) \
+  %r heapSort(v) & !h1(v) ==> !h2(v) \
+  %r heapSort(v) &  h1(v) ==>  h3(v) \
+  %r heapSort(v) & !h1(v) ==> !h3(v) \
+  %r heapSort(v) &  h1(v) ==>  h4(v) \
+  %r heapSort(v) & !h1(v) ==> !h4(v) 
+
+#define KeepHeapStructureBinary(h1, h2, h3) \
+  %r heapSort(v) &  h1(v) ==>  h2(v) \
+  %r heapSort(v) & !h1(v) ==> !h2(v) \
+  %r heapSort(v) &  h1(v) ==>  h3(v) \
+  %r heapSort(v) & !h1(v) ==> !h3(v) 
+
+#define KeepHeapStructureUnary(h1, h2) \
+  %r heapSort(v) &  h1(v) ==>  h2(v) \
+  %r heapSort(v) & !h1(v) ==> !h2(v)
+
+#define SLEquivIntegrity(p, q, s, d1, d2, d3) \
+  KeepHeapStructureBinary(d1, d2, d3) \
+  EquivIntegrity(p, q, s)
+
+#define StarAndIntegrity(p, q, s, d1, d2, d3) \
+  DecomposeHeap(d1, d2, d3) \
+  AndIntegrity(p, q, s)
+
+#define SLAndIntegrity(p, q, s, d1, d2, d3) \
+  KeepHeapStructureBinary(d1, d2, d3) \
+  AndIntegrity(p, q, s)
+
+#define SLOrIntegrity(p, q, s, d1, d2, d3) \
+  KeepHeapStructureBinary(d1, d2, d3) \
+  OrIntegrity(p, q, s)
+
+#define SLNotIntegrity(p, q, d1, d2) \
+  KeepHeapStructureUnary(d1, d2) \
+  NotIntegrity(p, q)
+
+#define SLIteIntegrity(p, q, s, t, d1, d2, d3, d4) \
+  KeepHeapStructureTernary(d1, d2, d3, d4) \
+  IteIntegrity(p, q, s, t)
+
+#define Bind(Evar, var, d) \
+  %r E(v)  formula() & heapSort(v) & boolSort(v1) &  var(v) &  d(v) &  Evar(v1)             ==>  bval(v1) \
+  %r E(v)  formula() & heapSort(v) & boolSort(v1) &  var(v) &  d(v)             & !bval(v1) ==> !Evar(v1) \
+  %r E(v1) formula() & heapSort(v) & boolSort(v1) &  var(v)         &  Evar(v1) & !bval(v1) ==> !d(v) \
+  %r E(v1) formula() & heapSort(v) & boolSort(v1)           &  d(v) &  Evar(v1) & !bval(v1) ==> !var(v)
+
+#define ExistsIntegrity(p,Evar,s,var,d1,d2,d3) \
+  AndIntegrity(p, Evar, s) \
+  Bind(Evar, var, d2) \
+  KeepHeapStructureBinary(d1, d2, d3) \
+
+#define ExistentialMagicWandIntegrity(p0, p1, p2, d0, d1, d2) \
+  DecomposeHeap(d2, d1, d0) \
+  AndIntegrity(p0, p1, p2)
+
+#define Emp(pk, dk) \
+  %r formula() & (A(v) heapSort(v) -> !dk(v)) & boolSort(vk) & pk(vk)  ==>  bval(vk) \
+  %r formula() & E(v) heapSort(v) & dk(v) & boolSort(vk) & pk(vk)  ==> !bval(vk) \
+  %r formula() & heapSort(v) & E(vk) boolSort(vk) & pk(vk) & bval(vk) ==> !dk(v)
+
+// Note: EqNull, NotEqNull, LsNull, and PointsToNull have all been removed;
+//   we now have a null predicate, which can be used anywhere a stack variable predicate can
+//   be used; therefore you can write Eq(a1,null) instead of EqNull, and so on.
+
+// Updated to use is_eq[a1,a2]() (Note this is a semantic change also: we're making it so x==y is not tied to a domain)
+#define Eq(pm, x, y, dm) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) &  bval(vm) ==>  is_eq[x,y]() \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & !bval(vm) ==> !is_eq[x,y]() \
+  %r formula() &  is_eq[x,y]() & boolSort(vm) & pm(vm) ==>  bval(vm) \
+  %r formula() & !is_eq[x,y]() & boolSort(vm) & pm(vm) ==> !bval(vm)
+
+#define NullVariable(x) \
+  %r formula() & heapSort(v) ==> !x(v)
+
+#define SLTrue(pm, dm) \
+  %r formula() & boolSort(vm) & pm(vm) ==> bval(vm)
+
+#define PointsTo(p, x, y, d) \
+  %r formula() &       boolSort(vm) & p(vm) & (E(v2) d(v2)) & A(v1) heapSort(v1) -> ((d(v1) -> x(v1)) & (x(v1) -> d(v1)) & (x(v1) -> nxt_contains[y](v1))) ==> bval(vm) /* 2013_11_05 */ \
+  %r formula() & E(vm) boolSort(vm) & p(vm) & bval(vm) & heapSort(v1) & d(v1) ==> x(v1) \ 
+  %r formula() & E(vm) boolSort(vm) & p(vm) & bval(vm) & heapSort(v1) & x(v1) ==> d(v1) \ 
+  %r formula() & E(vm) boolSort(vm) & p(vm) & bval(vm) & heapSort(v1) & x(v1) ==> nxt_contains[y](v1) \ 
+  %r formula() & E(vm) boolSort(vm) & p(vm) & bval(vm) & heapSort(v1) & d(v1) & heapSort(v2) & d(v2) ==> v1==v2 \
+  %r formula() &       boolSort(vm) & p(vm) & ((A(v2) !d(v2)) | (E(v1) heapSort(v1) & !((d(v1) -> x(v1)) & (x(v1) -> d(v1)) & (x(v1) -> nxt_contains[y](v1))))) ==> !bval(vm) \
+   /* Jason corrected errors in the below three constraints on 2013_11_12 */ \
+  %r formula() & E(vm) boolSort(vm) & p(vm) & !bval(vm) & (A(v2,v3) (d(v2) & d(v3)) -> v2==v3) &         x(v1) & nxt_contains[y](v1) ==> !d(v1) \
+  %r formula() & E(vm) boolSort(vm) & p(vm) & !bval(vm) & (A(v2,v3) (d(v2) & d(v3)) -> v2==v3) & d(v1) &         nxt_contains[y](v1) ==> !x(v1) \
+  %r formula() & E(vm) boolSort(vm) & p(vm) & !bval(vm) & (A(v2,v3) (d(v2) & d(v3)) -> v2==v3) & d(v1) & x(v1)                       ==> !nxt_contains[y](v1)
+
+// *** Constraint macros for Ls:
+
+//
+// nlink[dm,y](v) means that v's successor is either in dm or is y (allowing for y==null, in which case v has no outgoing n edge)
+//
+#define LsPredicateDef(y, dm, nl) \
+  %p nlink[dm,y](v) pointer nonabs \
+  %i nl(v) = nlink[dm,y](v) \
+  /* %i rlvnt_nlink[dm,y](v) = (relevant(v) -> nlink[dm,y](v)) */ /* tried an "irrelevant" predicate here, but it's now removed */ \
+  \
+  /* %r !relevant(v) ==> !rlvnt_nlink[dm,y](v) */ \
+  /* %r relevant(v) & nlink[dm,y](v) ==> rlvnt_nlink[dm,y](v) */ \
+  /* %r heapSort(v) & !rlvnt_nlink[dm,y](v) ==> !nlink[dm,y](v) */ /* added 2014_01_19 */ \
+  \
+  %r      heapSort(v) &                   ((E(v1) heapSort(v1) & n(v,v1) & dm(v1)) | nxt_contains[y](v)) ==>  nlink[dm,y](v) \
+  %r      heapSort(v) &                  !((E(v1) heapSort(v1) & n(v,v1) & dm(v1)) | nxt_contains[y](v)) ==> !nlink[dm,y](v) \
+  %r      heapSort(v) &  nlink[dm,y](v) & !(E(v1) heapSort(v1) & n(v,v1) & dm(v1)) ==> nxt_contains[y](v) \ 
+  %r E(v) heapSort(v) &  nlink[dm,y](v) & !nxt_contains[y](v) & heapSort(v1) & n(v,v1) ==> dm(v1) \
+  %r      heapSort(v) &  nlink[dm,y](v) & !nxt_contains[y](v) & heapSort(v1) & !dm(v1) ==> !n(v,v1) /* added by JTB 2013_11_07 */ \ 
+  %r      heapSort(v) & !nlink[dm,y](v) &                       heapSort(v1) &  dm(v1) ==> !n(v,v1) /* added by JTB 2014_01_19 */ \
+  %r E(v) heapSort(v) & !nlink[dm,y](v) & heapSort(v1) & n(v,v1) ==> !dm(v1) \
+  %r      heapSort(v) & !nlink[dm,y](v) ==> !nxt_contains[y](v)
+
+// ls(x,y) over dm is true iff:
+//    either (1) 
+//                (1a) x==y and     (currently allowing x==y==null)
+//                (1b) dm is empty
+//        or (2)
+//                (2a) x!=y and
+//                (2b) x is in dm and
+//                (2c) for every v in dm
+//                     (2c1) r[n,x](v) and
+//                     (2c2) nlink[dm,y](v) and
+//                     (2c3) !r[n,y](v)
+//   Note that this is implicity assuming that there can be no cycles.  If there could be cycles, then we'd have to reformulate ls,
+//     because then it would be possible to have ls(x,y) with x==y and dm not empty (because dm's contents are a cycle).
+#define Ls(pm, x, y, dm) \
+  %r formula() &       boolSort(vm) & pm(vm) &  ((is_eq[x,y]() & A(v5) (heapSort(v5) -> !dm(v5))) | (!is_eq[x,y]() & ((E(v1) x(v1) & heapSort(v1) & dm(v1)) & (A(v) (heapSort(v) & dm(v)) -> (r[n,x](v) & nlink[dm,y](v) & !r[n,y](v)))))) ==> bval(vm) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) & A(v5) (heapSort(v5) -> !dm(v5)) ==>  is_eq[x,y]() \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) & E(v5) (heapSort(v5)   & dm(v5)) ==> !is_eq[x,y]() \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) &  is_eq[x,y]() & heapSort(v5) ==> !dm(v5) \
+  /* possible rule: bval(vm) and singleton dm(v) ==> x(v) */ \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) & heapSort(v) & dm(v) ==> r[n,x](v) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) & heapSort(v) & dm(v) ==> nlink[dm,y](v) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & bval(vm) & heapSort(v) & dm(v) ==> !r[n,y](v) \
+  %r formula() &       boolSort(vm) & pm(vm) & !((is_eq[x,y]() & A(v5) (heapSort(v5) -> !dm(v5))) | (!is_eq[x,y]() & ((E(v1) x(v1) & heapSort(v1) & dm(v1)) & (A(v) (heapSort(v) & dm(v)) -> (r[n,x](v) & nlink[dm,y](v) & !r[n,y](v)))))) ==> !bval(vm) \
+  %r formula() &       boolSort(vm) & pm(vm) & !bval(vm) & ((E(v1) x(v1) & heapSort(v1) & dm(v1)) & (A(v) (heapSort(v) & dm(v)) -> (r[n,x](v) & nlink[dm,y](v) & !r[n,y](v)))) ==> is_eq[x,y]() \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & !bval(vm) & A(v5) (heapSort(v5) -> !dm(v5)) ==> !is_eq[x,y]()
+
+/* 
+  These next three rules are quite weak.  That is because !ls(x,y) implies the existence of a node with these properties, and we can't make a constraint rule with a conclusion like "E(v) psi(v)".
+  These rules illustrate the possibility of dealing with "phi() ==> E(v) psi(v)" by saying "If phi() holds and everybody besides you is !psi then you must be psi".
+  I have left them out because I suspect they will be rarely used (note that they can only trigger when a very strong condition holds), and might slow things down.
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & !bval(vm) & !is_eq[x,y]() & (E(v1) x(v1) & heapSort(v1) & dm(v1)) & heapSort(v) & dm(v) & (A(v5) (heapSort(v5) & dm(v5) & v5 != v) -> (r[n,x](v5) & nlink[dm,y](v5) & !r[n,y](v5))) &  r[n,x](v) & nlink[dm,y](v) ==> r[n,y](v) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & !bval(vm) & !is_eq[x,y]() & (E(v1) x(v1) & heapSort(v1) & dm(v1)) & heapSort(v) & dm(v) & (A(v5) (heapSort(v5) & dm(v5) & v5 != v) -> (r[n,x](v5) & nlink[dm,y](v5) & !r[n,y](v5))) & !r[n,y](v) & nlink[dm,y](v) ==> !r[n,x](v) \
+  %r formula() & E(vm) boolSort(vm) & pm(vm) & !bval(vm) & !is_eq[x,y]() & (E(v1) x(v1) & heapSort(v1) & dm(v1)) & heapSort(v) & dm(v) & (A(v5) (heapSort(v5) & dm(v5) & v5 != v) -> (r[n,x](v5) & nlink[dm,y](v5) & !r[n,y](v5))) &  r[n,x](v) & !r[n,y](v) ==> !nlink[dm,y](v)  
+*/
+

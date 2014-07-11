@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 24.51-b03 (Oracle Corporation)
+Built-By: jbreck
+Main-Class: tvla.Runner
+Class-Path: cprep.jar java_cup.jar trove.jar bsh.jar
+
+Name: tvla
+Specification-Title: TVLA
+Specification-Version: 3
+Implementation-Title: tvla
+Implementation-Version: 3 July 8 2014
+
